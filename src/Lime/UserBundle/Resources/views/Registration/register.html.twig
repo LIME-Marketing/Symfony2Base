@@ -1,0 +1,32 @@
+{% extends "::base.html.twig" %}
+
+{% block stylesheets %}
+{{ parent() }}
+{%  endblock stylesheets %}
+
+
+{% block header_scripts %}
+{{ parent() }}
+{% endblock header_scripts %}
+
+
+{% block content %}
+<h1>Register</h1>
+<div class="row">
+    <div class="span12">
+        {% form_theme form 'LimeUserBundle:Form:registration_fields.html.twig' %}
+        <form action="{{ path('fos_user_registration_register') }}" {{ form_enctype(form) }} method="POST" class="fos_user_registration_register">
+            {{ form_errors(form) }}
+            {{ form_row(form.username) }}
+            {{ form_row(form.email) }}
+            {{ form_row(form.plainPassword.first) }}
+            {{ form_row(form.plainPassword.second, {'attr':({'placeholder':'retype password'})}) }}
+            {{ form_rest( form ) }}
+            <div>
+                <input type="submit" value="sign up" class="registration-submit btn" style="margin-left: 0px;"/>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock content %}

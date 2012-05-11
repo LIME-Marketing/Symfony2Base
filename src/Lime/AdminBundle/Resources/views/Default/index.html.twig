@@ -1,0 +1,17 @@
+{% extends 'LimeAdminBundle::layout.html.twig' %}
+
+{% block admin_content %}
+    <div>
+        <ul>
+            <li>
+                <a href="{{ path('lime_admin_config_index') }}">Site Configuration</a>
+            </li>
+            <li>
+                <a href="{{ path('lime_admin_message_list') }}">Messages {% if unread > 0 %}- {{ unread }} unread messages{% endif %}</a>
+            </li>
+            <li>
+                <a href="{{ path('lime_admin_uploader_index') }}">Design Uploader</a>
+            </li>
+        </ul>
+    </div>
+{% endblock %}

@@ -1,0 +1,11 @@
+lime_frontend_page_index:
+    pattern: /
+    defaults: { _controller: LimeFrontendBundle:Page:index }
+
+lime_frontend_page_about:
+    pattern: /about/
+    defaults: { _controller: LimeFrontendBundle:Page:about }
+
+lime_frontend_page_contact:
+    pattern: /contact/
+    defaults: { _controller: LimeFrontendBundle:Page:contact }

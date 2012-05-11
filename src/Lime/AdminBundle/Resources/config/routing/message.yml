@@ -1,0 +1,11 @@
+lime_admin_message_list:
+    pattern: /
+    defaults: { _controller: LimeAdminBundle:Message:list }
+
+lime_admin_message_show:
+    pattern: /{slug}/
+    defaults: { _controller: LimeAdminBundle:Message:show }
+
+lime_admin_message_unread:
+    pattern: /{slug}/unread
+    defaults: { _controller: LimeAdminBundle:Message:unread }

@@ -1,0 +1,11 @@
+parameters:
+    lime_admin.config.class:               Lime\AdminBundle\Entity\Config
+    lime_admin.config.constants.class:     Lime\AdminBundle\Constant\ConfigConstants
+
+services:
+
+    # Constants
+    lime_admin.config.constants:
+        class: %lime_admin.config.constants.class%
+        arguments:
+            actions: %lime_admin.configs%

@@ -1,0 +1,33 @@
+<?php
+
+namespace GRI\AdminBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * @ORM\Entity
+ * @ORM\Table(name="gri_admin_config") 
+ */
+class Configuration
+{
+    /**
+     * @ORM\Id
+     * @ORM\Column(type="integer")
+     */
+    protected $config_id;
+    
+    /**
+     * @ORM\Column(type="string") 
+     */
+    protected $name;
+    
+    /**
+     * @ORM\Column(type="string")  
+     */
+    protected $description;
+    
+    /**
+     * @ORM\Column(type="integer")
+     */
+    protected $value;
+}

@@ -1,0 +1,28 @@
+{% extends 'LimeAdminBundle::layout.html.twig' %}
+
+{% block admin_content %}
+<span>
+    {{ message }}
+    {{ form_errors(form) }}
+</span>
+<table class="table table-bordered table-striped">
+    {% for config in configs %}
+        <tr>
+            <td>
+                {{ config.name }}
+            </td>
+            <td>
+                {{ config.description }}
+            </td>
+            <td>
+                <form action="{{ path('lime_admin_config_index') }}" method="post" {{ form_enctype(form) }}>
+                    <input type="text" name="value" value="{{ config.value }}" />
+                    <input type="hidden" name="name" value="{{ config.name }}" />
+                    <input type="submit" value="Update" />
+                    {{ form_rest(form) }}
+                </form>
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+{% endblock %}

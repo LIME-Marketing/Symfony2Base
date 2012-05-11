@@ -1,0 +1,95 @@
+{% extends 'LimeAdminBundle::layout.html.twig' %}
+
+{% block admin_content %}
+    <div>
+        <div>
+            <form action="{{ path('lime_user_admin_index') }}" method="get">
+                <input type="text" name="searchterm" />
+                <input type="submit" value="Search" />
+            </form>
+        </div>
+
+        <div>
+            <div>
+                <table class="table table-striped table-condensed">
+                    <thead>
+                        <th>
+                            Username
+                        </th>
+                        <th>
+                            Last Login
+                        </th>
+                        <th>
+                            Roles
+                        </th>
+                        <th>
+                            Actions
+                        </th>
+                    </thead>
+                    <tbody>
+                        {% for user in user %}
+                        <tr>
+                            <td>
+                                {{ user.username }}
+                            </td>
+                            <td>
+                                {{ user.lastLogin|date('m/d/Y') }}
+                            </td>
+                            <td>
+                                {{ _self.role_static(user, token) }}
+                            </td>
+                            <td>
+                                {{ _self.admin_link(user, token) }}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+    
+{# 
+# Function for displaying promote/demote link
+#}
+{% macro admin_link(user, token) %}
+    {% set is_admin = false %}
+    {% for role in user.getRoles() %} 
+        {% if role == 'ROLE_ADMIN' or role == 'ROLE_SUPER_ADMIN' %}
+            {% set is_admin = true %}
+        {% endif %}
+    {% endfor %}
+    {% if is_admin %}
+        <form action="{{ path('lime_user_admin_demote') }}" method="post">
+            <input type="hidden" id="form_user" name="form[user]" value="{{ user.email }}" />
+            <input type="hidden" id="form__token" name="form[_token]" value="{{ token }}">
+            <input type="submit" class="btn span2" value="Demote" />
+        </form>
+    {% else %}
+        <form action="{{ path('lime_user_admin_promote') }}" method="post">
+            <input type="hidden" id="form_user" name="form[user]" value="{{ user.email }}" />
+            <input type="hidden" id="form__token" name="form[_token]" value="{{ token }}">
+            <input type="submit" class="btn span2" value="Promote" />
+        </form>
+    {% endif %}
+{% endmacro %}
+
+        
+{# 
+# Function for displaying user role
+#}
+{% macro role_static(user) %}
+    {% set is_admin = false %}
+    {% for role in user.getRoles() %} 
+        {% if role == 'ROLE_ADMIN' or role == 'ROLE_SUPER_ADMIN' %}
+            {% set is_admin = true %}
+        {% endif %}
+    {% endfor %}
+    {% if is_admin %}
+        Administrator
+    {% else %}
+        User
+    {% endif %}
+{% endmacro %}

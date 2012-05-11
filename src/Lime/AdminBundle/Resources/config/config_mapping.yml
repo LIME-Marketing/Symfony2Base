@@ -1,0 +1,44 @@
+parameters:
+    lime_admin.configs:
+
+        site_name:
+            name: "Site Name"
+            index_name: "site_name"
+            description: "The name of the site"
+            value: "Example Site"
+
+        site_url:
+            name: "Site Url"
+            index_name: "site_url"
+            description: "The url of the site"
+            value: "http://example.com"
+
+        admin_email:
+            name: "Administrator Email"
+            index_name: "admin_email"
+            description: "The administrator email"
+            value: "admin@example.com"
+
+        info_email:
+            name: "Information Email"
+            index_name: "info_email"
+            description: "The information email"
+            value: "info@example.com"
+
+        registration_email:
+            name: "Registration Email"
+            index_name: "registration_email"
+            description: "The registration email"
+            value: "registration@example.com"
+
+        billing_email:
+            name: "Billing Email"
+            index_name: "billing_email"
+            description: "The registration email"
+            value: "billing@example.com"
+
+        contact_number:
+            name: "Contact Number"
+            index_name: "contact_number"
+            description: "The contact number"
+            value: "555-555-5555"

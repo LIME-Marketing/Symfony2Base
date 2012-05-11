@@ -1,0 +1,337 @@
+#!/usr/bin/env php
+<?php
+
+$kernel = new initKernel();
+
+if (isset($argv['1'])) {
+    $kernel->$argv['1']();
+}
+else {
+    $init = new init();
+    $init->display();
+}
+
+class init
+{
+    protected $class;
+
+    public function __construct()
+    {
+        $this->class = new ReflectionClass('initKernel');
+    }
+
+    public function display()
+    {
+        echo "\n";
+        $classAnnotations  = $this->getClassAnnotations();
+        foreach ($classAnnotations as $message) {
+            echo "\033[32m$message\033[0m\n";
+        }
+
+        echo "\n";
+        $methods = $this->getMethods();
+
+        foreach ($methods as $method) {
+            $methodAnnotations = $this->getMethodAnnotations($method);
+            echo "\033[32m$methodAnnotations[0]:\033[0m\n    \033[33m$methodAnnotations[1]\033[0m\n\n"; 
+        }
+    }
+
+    protected function getClassAnnotations()
+    {       
+        $r = $this->class;
+        $doc = $r->getDocComment();
+        preg_match_all('#@(.*?)\n#s', $doc, $annotations);
+
+        return $annotations[1];
+    }
+
+    protected function getMethodAnnotations($method)
+    {       
+        $r = new ReflectionMethod('initKernel', $method);
+        $doc = $r->getDocComment();
+        preg_match_all('#@(.*?)\n#s', $doc, $annotations);
+
+        return $annotations[1];
+    }
+
+    protected function getMethods()
+    {
+        $methodsRaw = $this->class->getMethods();
+        $methods    = array();
+
+        foreach ($methodsRaw as $method) {
+            $methods[] = $method->getName();
+        }
+
+        return $methods;
+    }
+}
+
+/**
+ * @Welcome to the fabric initialization script.This script can be used to set up dependencies and deploy projects.
+ * @Author: Michael Shattuck <ms2474@gmail.com>
+ */
+class initKernel
+{
+    /**
+     * @deploy
+     * @This function runs all methods required to set up and deploy the project.
+     */
+    public function deploy()
+    {
+        $this->setparams();
+        $this->createBootstrapCache();
+        $this->getcomposer();
+        $this->updatevendors();
+        $this->createdb();
+        $this->setupdb();
+        $this->installassets();
+        $this->clearcache();
+    }
+
+    /**
+     * @setparams
+     * @Creates a parameters.yml file for your app to use. Assumes that you have a paremeters.yml.dist file in your app/config folder.
+     */
+    public function setparams()
+    {
+        $params = array();
+        
+        echo "\n\033[32mPlease enter the parameters for database and mail configuration.\nLeave blank to use the default value.\033[0m\n\n";
+
+        // Database Name
+        echo "\033[33mDatabase name (symfony): \033[0m";
+        $handle = fopen ("php://stdin","r");
+        $param  = trim(fgets($handle));
+        if ($param != "") {
+            $params['dbname'] = $param;
+        }
+        else {
+            $params['dbname'] = "symfony";
+        }
+
+        //Database User
+        echo "\033[33mDatabase User (root): \033[0m";
+        $handle = fopen ("php://stdin","r");
+        $param  = trim(fgets($handle));
+        if ($param != "") {
+            $params['dbuser'] = $param;
+        }
+        else {
+            $params['dbuser'] = "root";
+        }
+
+        // Database Password
+        echo "\033[33mDatabase Password (null): \033[0m";
+        $handle = fopen ("php://stdin","r");
+        $param  = trim(fgets($handle));
+        if ($param != "") {
+            $params['dbpass'] = $param;
+        }
+        else {
+            $params['dbpass'] = "~";
+        }
+
+        //Mail Transport
+        echo "\033[33mMail Transport (smtp): \033[0m";
+        $handle = fopen ("php://stdin","r");
+        $param  = trim(fgets($handle));
+        if ($param != "") {
+            $params['mtrans'] = $param;
+        }
+        else {
+            $params['mtrans'] = "smtp";
+        }
+
+        // Mail Host
+        echo "\033[33mMail Host (localhost): \033[0m";
+        $handle = fopen ("php://stdin","r");
+        $param  = trim(fgets($handle));
+        if ($param != "") {
+            $params['mhost'] = $param;
+        }
+        else {
+            $params['mhost'] = "localhost";
+        }
+
+        // Mail User
+        echo "\033[33mMail User (null): \033[0m";
+        $handle = fopen ("php://stdin","r");
+        $param  = trim(fgets($handle));
+        if ($param != "") {
+            $params['muser'] = $param;
+        }
+        else {
+            $params['muser'] = "~";
+        }
+
+        // Mail Password
+        echo "\033[33mMail Password (null): \033[0m";
+        $handle = fopen ("php://stdin","r");
+        $param  = trim(fgets($handle));
+        if ($param != "") {
+            $params['mpass'] = $param;
+        }
+        else {
+            $params['mpass'] = "~";
+        }
+
+        // Mail Encryption
+        echo "\033[33mMail Encryption (null): \033[0m";
+        $handle = fopen ("php://stdin","r");
+        $param  = trim(fgets($handle));
+        if ($param != "") {
+            $params['mencrypt'] = $param;
+        }
+        else {
+            $params['mencrypt'] = "~";
+        }
+
+        // Mail Port
+        echo "\033[33mMail Port (null): \033[0m";
+        $handle = fopen ("php://stdin","r");
+        $param  = trim(fgets($handle));
+        if ($param != "") {
+            $params['mport'] = $param;
+        }
+        else {
+            $params['mport'] = "~";
+        }
+        
+        $paramCreator = new parameters;
+        if ($paramCreator->createParameters($params)) {
+            echo "\033[32mParameters.yml file created\033[0m\n";
+        }
+        else {
+            echo "\033[31mThere was an error creating your parameters.yml file.\033[0m\n";
+        }
+    }
+
+    /**
+     * @createbootstrapcache
+     * @Creates the bootstrap.php.cache 
+     */
+    public function createBootstrapCache()
+    {
+        $name   = "bootstrap.php.cache";
+        $handle = fopen(__DIR__.'/'.$name, 'w');
+        fclose($handle);
+    }
+
+    /**
+     * @createdb
+     * @Create a database based on the parameters.yml
+     */
+    public function createdb()
+    {
+        shell_exec("cd ".__DIR__."/../");
+        echo sprintf("\033[32m".shell_exec('php app/console doctrine:database:create')."\033[0m");
+    }
+
+    /**
+     * @getcomposer
+     * @Gets the latest version of composer.phar 
+     */
+    public function getcomposer()
+    {
+        shell_exec("cd ".__DIR__."/../");
+        echo sprintf("\033[32m".shell_exec('curl -s http://getcomposer.org/installer | php')."\033[0m");
+    }
+
+    /**
+     * @updatevendors
+     * @Installs and Updates the vendors using composer. 
+     */
+    public function updatevendors()
+    {
+        shell_exec("cd ".__DIR__."/../");
+        echo sprintf("\033[32mInstalling vendors...\033[0m");
+        echo sprintf("\033[32m".shell_exec('php composer.phar install')."\033[0m");
+        echo sprintf("\n\033[32mUpdating vendors...\033[0m");
+        echo sprintf("\033[32m".shell_exec('php composer.phar update')."\033[0m");
+    }
+
+    /**
+     * @setupdb
+     * @Creates the schema for the database and populates the defaults. 
+     */
+    public function setupdb()
+    {
+        shell_exec("cd ".__DIR__."/../");
+
+        // Create the different tables in the database
+        echo sprintf("\033[33mUpdating the schema...\033[0m\n");
+        echo sprintf("\033[32m".shell_exec("php app/console doctrine:schema:update --force")."\033[0m\n");
+
+        // Populate the configuration defaults
+        echo sprintf("\033[33mPopulating configuration defaults...\033[0m\n");
+        echo sprintf("\033[32m".shell_exec("php app/console lime:admin:init")."\033[0m\n");
+    }
+
+    /**
+     * @installassets
+     * @Install all assets.
+     */
+    public function installassets()
+    {
+        shell_exec("cd ".__DIR__."/../");
+        echo sprintf("\033[33mInstalling assets...\033[0m\n");
+        echo sprintf("\033[32m".shell_exec("php app/console assets:install web --symlink")."\033[0m\n");
+    }
+
+    /**
+     * @clearcache
+     * @Clears the dev and prod caches. 
+     */
+    public function clearcache()
+    {
+        echo sprintf("\033[33mClearing dev cache...\033[0m\n");
+        echo sprintf("\033[32m".shell_exec("php app/console cache:clear")."\033[0m");
+        echo sprintf("\n\033[33mClearing prod cache...\033[0m\n");
+        echo sprintf("\033[32m".shell_exec("php app/console cache:clear --env=prod")."\033[0m");
+    }
+}
+
+class parameters
+{
+    public function createParameters(array $params)
+    {
+        $content = "parameters:
+    database_driver:   pdo_mysql
+    database_host:     localhost
+    database_port:     ~
+    database_name:     ".$params['dbname']."
+    database_user:     ".$params['dbuser']."
+    database_password: ".$params['dbpass']."\n
+    mailer_transport:  ".$params['mtrans']."
+    mailer_host:       ".$params['mhost']."
+    mailer_user:       ".$params['muser']."
+    mailer_password:   ".$params['mpass']."
+    mailer_encryption: ".$params['mencrypt']."
+    mailer_port:       ".$params['mport']."\n
+    locale:            en
+    secret:            ThisTokenIsNotSoSecretChangeIt\n";
+
+
+        if ($this->saveParams($content)) {
+            return true;
+        }
+
+        return false;
+    }
+    
+    public function saveParams($content)
+    {
+        $name   = "parameters.yml";
+        $handle = fopen(__DIR__.'/config/'.$name, 'w');
+        if ($handle) {
+            fwrite($handle, $content);
+            fclose($handle);
+
+            return true;
+        }
+
+        return false;
+    }
+}

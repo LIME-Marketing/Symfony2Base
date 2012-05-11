@@ -1,0 +1,32 @@
+# System Routes
+_home:
+    pattern: /
+    defaults: { _controller: LimeFrontendBundle:Page:index }
+
+# FOS User Routes
+fos_user_security:
+    resource: "@FOSUserBundle/Resources/config/routing/security.xml"
+
+fos_user_profile:
+    resource: "@LimeUserBundle/Resources/config/routing/profile.xml"
+    prefix: /profile
+
+fos_user_register:
+    resource: "@FOSUserBundle/Resources/config/routing/registration.xml"
+    prefix: /register
+
+fos_user_resetting:
+    resource: "@FOSUserBundle/Resources/config/routing/resetting.xml"
+    prefix: /resetting
+
+fos_user_change_password:
+    resource: "@FOSUserBundle/Resources/config/routing/change_password.xml"
+    prefix: /profile
+
+# Our Routes
+lime_user:
+    resource: "@LimeUserBundle/Resources/config/routing/admin.yml"
+    prefix: /users
+
+lime_frontend:
+    resource: "@LimeFrontendBundle/Resources/config/routing.yml"

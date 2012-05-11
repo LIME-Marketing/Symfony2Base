@@ -1,0 +1,47 @@
+security:
+    encoders:
+        FOS\UserBundle\Model\UserInterface: sha512
+
+    role_hierarchy:
+        ROLE_ADMIN:       ROLE_USER
+        ROLE_SUPER_ADMIN: [ROLE_USER, ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH]
+
+    providers:
+        fos_userbundle:
+            id: fos_user.user_manager
+
+    acl:
+        connection: default
+
+    access_decision_manager:
+        strategy: unanimous
+
+    firewalls:
+        dev:
+            pattern:  ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+        main:
+            pattern: ^/.*
+            stateless: false
+            form_login:
+                provider: fos_userbundle
+            anonymous:    true
+            remember_me:
+                key: %secret%
+            logout:
+                path:   /logout
+                target: /
+                invalidate_session: true
+
+
+    access_control:
+        - { path: ^/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/about, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/contact, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/pages, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/secured/.*, role: [IS_AUTHENTICATED_FULLY] }
+        - { path: ^/admin/, role: ROLE_ADMIN }
+        - { path: ^/$, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/*, role: IS_AUTHENTICATED_REMEMBERED }

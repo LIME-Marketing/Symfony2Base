@@ -1,0 +1,95 @@
+{% block field_row %}
+{% spaceless %}
+    <div class="form_row">
+        {{ form_label(form) }}
+        {{ form_errors(form) }}
+        {{ form_widget(form) }}
+    </div>
+{% endspaceless %}
+{% endblock field_row %}
+
+{% block _fos_user_profile_form_user_profile_address_row %}
+    <div class="address_block">
+        <div class="address_row">
+            {{ form_label(form) }}
+            {{ form_errors(form) }}
+            {{ form_widget(form) }}
+        </div>
+{% endblock %}
+        
+{% block _fos_user_profile_form_user_profile_city_row %}
+        <div class="city_row" style="float: left;">
+            {{ form_label(form) }}
+            {{ form_errors(form) }}
+            {{ form_widget(form) }}
+        </div>
+{% endblock %}
+        
+{% block _fos_user_profile_form_user_profile_state_row %}
+        <div class="state_row" style="float: left;">
+            {{ form_label(form) }}
+            {{ form_errors(form) }}
+            {{ form_widget(form) }}
+        </div>
+{% endblock %}
+        
+{% block _fos_user_profile_form_user_profile_zip_row %}
+        <div class="zip_row" style="float: left;">
+            {{ form_label(form) }}
+            {{ form_errors(form) }}
+            {{ form_widget(form) }}
+        </div>
+        <div style="clear: both"></div>
+    </div>
+    <br />
+{% endblock %}
+        
+{% block _fos_user_profile_form_user_profile_phoneNumber_row %}
+    <h3>Contact Information</h3><br />
+    <div class="phone_number_row">
+        {{ form_label(form) }}
+        {{ form_errors(form) }}
+        {{ form_widget(form) }}
+    </div>
+    <br />
+{% endblock %}
+    
+    
+        
+{% block _fos_user_profile_form_user_profile_firstName_row %}
+    <br /><h3>Personal Information</h3><br />
+    <div class="firstname_row">
+        {{ form_label(form) }}
+        {{ form_errors(form) }}
+        {{ form_widget(form) }}
+    </div>
+{% endblock %}
+    
+{% block _fos_user_profile_form_user_profile_lastName_row %}
+    <div class="lastname_row">
+        {{ form_label(form) }}
+        {{ form_errors(form) }}
+        {{ form_widget(form) }}
+    </div>
+    <br />
+{% endblock %}
+    
+{% block _fos_user_profile_form_user_profile_profileImage_row %}
+    <br /><h3>Avatar</h3><br />
+    <div class="profile_image_row">
+        {{ form_label(form) }}
+        {{ form_errors(form) }}
+        {{ form_widget(form) }}
+    </div>
+    <br /><br />
+{% endblock %}
+    
+{% block _fos_user_profile_form_current_row %}
+    <br /><h3>Confirm Changes</h3><br />
+    <div class="current_password_row">
+        {{ form_label(form) }}
+        {{ form_errors(form) }}
+        {{ form_widget(form) }}
+    </div>
+    <br /><br />
+{% endblock %}

@@ -1,0 +1,66 @@
+{% extends 'LimeAdminBundle::layout.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet/less" type="text/css" href="{{ asset('bundles/limeadmin/less/admin-messages.less') }}" />
+{% endblock %}
+
+
+{% block admin_content %}
+<div id="messages-wrapper">
+    <div class="row">
+        <div class="span9">
+            <h3>Unread Messages</h3>
+            <table class="table table-striped table-condensed">
+                <thead>
+                    <tr>
+                        <th>Subject</th>
+                        <th>Date Created</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for message in messages %}{% spaceless %}
+                    {% if message.isRead() != true %}
+                    <tr>
+                        <td><b>{{ message.subject }}</b></td>
+                        <td>{{ message.createdAt|date('d/m/Y') }}</td>
+                        <td>
+                            <a href="{{ path('lime_admin_message_show', {slug:message.slug}) }}" class="">View Message</a>
+                        </td>
+                    </tr>
+                    {% endif %}
+                {% endspaceless %}{% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span9">
+            <h3>Read Messages</h3>
+            <table class="table table-striped table-condensed">
+                <thead>
+                    <tr>
+                        <th>Subject</th>
+                        <th>Date Created</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for message in messages %}{% spaceless %}
+                    {% if message.isRead() %}
+                    <tr>
+                        <td>{{ message.subject }}</td>
+                        <td>{{ message.createdAt|date('d/m/Y') }}</td>
+                        <td>
+                            <a href="{{ path('lime_admin_message_show', {slug:message.slug}) }}" class="">View Message</a>
+                        </td>
+                    </tr>
+                    {% endif %}
+                {% endspaceless %}{% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock admin_content %}

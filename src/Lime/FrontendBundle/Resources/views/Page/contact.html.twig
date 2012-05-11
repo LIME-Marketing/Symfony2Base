@@ -1,0 +1,11 @@
+{% extends '::base.html.twig' %}
+
+{% block content %}
+<h1>Contact Us</h1>
+<p>Send us a message.</p>
+<form action="{{ path('lime_frontend_page_contact') }}" {{ form_enctype(form) }} method="POST">
+        {{ form_widget(form) }}
+        <input value="Submit" type="submit" class="btn btn-primary" style="margin-left: 0;"/>
+</form>
+
+{% endblock %}

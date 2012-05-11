@@ -1,0 +1,16 @@
+parameters:
+    base_service_factory.class:    Lime\BaseBundle\Factory\BaseServiceFactory
+    base_repository_factory.class: Lime\BaseBundle\Factory\BaseRepoFactory
+
+services:
+    base_service_factory:
+        class: %base_service_factory.class%
+        arguments:
+            container: "@service_container"
+
+    base_repository_factory:
+        class: %base_repository_factory.class%
+        arguments:
+            dispatcher: "@event_dispatcher"
+            em:         "@doctrine.orm.entity_manager"
+            container:  "@service_container"
