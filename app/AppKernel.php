@@ -19,24 +19,26 @@ class AppKernel extends Kernel
             new JMS\SecurityExtraBundle\JMSSecurityExtraBundle(),
             new JMS\AopBundle\JMSAopBundle(),
 
-            # third-party bundles
+            # Third-party bundles
             new FOS\UserBundle\FOSUserBundle(),
             new JMS\SerializerBundle\JMSSerializerBundle($this),
             new FOS\RestBundle\FOSRestBundle(),
             new Stof\DoctrineExtensionsBundle\StofDoctrineExtensionsBundle(),
-            new Vich\UploaderBundle\VichUploaderBundle(),
 
-            # our bundles
+            # Lime bundles
             new Lime\UserBundle\LimeUserBundle(),
             new Lime\FrontendBundle\LimeFrontendBundle(),
             new Lime\BaseBundle\LimeBaseBundle(),
             new Lime\AdminBundle\LimeAdminBundle(),
+
+            # Project bundles
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {
             $bundles[] = new Symfony\Bundle\WebProfilerBundle\WebProfilerBundle();
             $bundles[] = new Sensio\Bundle\DistributionBundle\SensioDistributionBundle();
             $bundles[] = new Sensio\Bundle\GeneratorBundle\SensioGeneratorBundle();
+            $bundles[] = new Lime\GeneratorBundle\LimeGeneratorBundle();
         }
 
         return $bundles;

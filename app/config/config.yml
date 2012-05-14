@@ -97,35 +97,6 @@ stof_doctrine_extensions:
         default:
             sluggable: true
 
-# Vich Uploader Configuration
-vich_uploader:
-    db_driver: orm
-    web_dir_name: web
-    twig: true
-    mappings:
-        profile_image:
-            upload_dir: %kernel.root_dir%/../web/img/profile-images
-            delete_on_remove: true
-            inject_on_load: true
-        artwork_image:
-            upload_dir: %kernel.root_dir%/../web/img/artwork-images
-            delete_on_remove: true
-            inject_on_load: true
-            namer: apealz.art.imgnamer.service
-        artist_image:
-            upload_dir: %kernel.root_dir%/../web/img/artist-images
-            delete_on_remove: true
-            inject_on_load: true
-            namer: apealz.art.imgnamer.service
-        product_image:
-            upload_dir: %kernel.root_dir%/../web/img/product-images
-            delete_on_remove: true
-            inject_on_load: true
-        product_image_mask:
-            upload_dir: %kernel.root_dir%/../web/img/product-image-masks
-            delete_on_remove: true
-            inject_on_load: true
-
 fos_rest:
     view:
         view_response_listener: force

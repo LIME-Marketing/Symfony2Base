@@ -1,0 +1,30 @@
+<ul class="nav nav-list">
+  <li class="nav-header">
+    {{ entity }} Actions
+  </li>
+    <li>
+        <a href="{{ "{{ path('"~ route_name_prefix ~"') }}" }}">
+            <i class="icon-list"></i>
+            Back to List
+        </a>
+    </li>
+{% if ('edit' in actions) and (not hide_edit) %}
+    <li>
+        <a href="{{ "{{ path('"~ route_name_prefix ~"_edit', { 'slug': entity.slug }) }}" }}">
+            <i class="icon-edit"></i>
+            Edit
+        </a>
+    </li>
+{% endif %}
+{% if ('delete' in actions) and (not hide_delete) %}
+    <li>
+        <form action="{{ "{{ path('"~ route_name_prefix ~"_delete', { 'slug': entity.slug }) }}" }}" method="post">
+            {{ '{{ form_widget(delete_form) }}' }}
+            <button type="submit" class="btn">
+                <i class="icon-remove"></i>
+                Delete
+            </button>
+        </form>
+    </li>
+{% endif %}
+</ul>
