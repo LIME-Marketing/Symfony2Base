@@ -1,0 +1,3 @@
+lime_profiler_profiler_index:
+    pattern: /_memory_profiler/
+    defaults: { _controller: LimeProfilerBundle:Profiler:index }
