@@ -5,7 +5,7 @@ namespace Lime\ProfilerBundle\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Lime\BaseBundle\Controller\BaseController;
-use Lime\ProfilerBundle\Model\Xhprof\XHProf;
+use Lime\ProfilerBundle\Model\Xhprof\XHProfReport;
 use Lime\ProfilerBundle\Model\Xhprof\XHProfCallGraph;
 
 /**
@@ -17,36 +17,78 @@ class ProfilerController extends BaseController
 {
     /**
      *
-     * @var xhprof 
+     * @var XHProf
      */
-    protected $exec;
+    protected $xhprof;
+
+    /**
+     *
+     * @var XHProfCallGraph
+     */
+    protected $callgraph;
 
     /**
      *
      * @param Request $request
      * @return Response 
      */
-    public function indexAction(Request $request)
+    public function indexAction(Request $request, $run)
     {
         $this->disableProfiler();
 
-        $exec       = new XHProf($this->getParameter('lime_profiler.location_reports'));
-        $parameters = $_GET;
-        $params     = $this->getParameterArray();
+        $xhprof        = $this->getXhprof();
+        $parameters    = $_GET;
+        $query         = $this->getQuery($parameters);
+        $squery        = $this->getSortedQuery($parameters);
+        $params        = $this->getParameterArray();
+        $params['run'] = $run;
 
         foreach ($parameters as $key => $value) {
             $params[$key] = $value;
         }
 
-        ob_start();
-        $exec->displayXHProfReport($params);
-        $output = ob_get_contents();
-        ob_end_clean();
+        $report = $xhprof->getReport($params);
 
         return $this->render('LimeProfilerBundle:Collector:index.html.twig', array(
             'url'    => $request->server->get('REQUEST_URI'),
             'params' => $params,
-            'output' => $output,
+            'report' => $report,
+            'run'    => $run,
+            'query'  => $query,
+            'squery' => $squery,
+        ));
+    }
+
+    /**
+     *
+     * @param Request $request
+     * @return Response 
+     */
+    public function functionAction(Request $request, $run, $function)
+    {
+        $this->disableProfiler();
+
+        $xhprof           = $this->getXhprof();
+        $parameters       = $_GET;
+        $query            = $this->getQuery($parameters);
+        $squery           = $this->getSortedQuery($parameters);
+        $params           = $this->getParameterArray();
+        $params['run']    = $run;
+        $params['symbol'] = $function;
+
+        foreach ($parameters as $key => $value) {
+            $params[$key] = $value;
+        }
+
+        $report = $xhprof->getReport($params);
+
+        return $this->render('LimeProfilerBundle:Collector:function.html.twig', array(
+            'url'    => $request->server->get('REQUEST_URI'),
+            'params' => $params,
+            'report' => $report,
+            'run'    => $run,
+            'query'  => $query,
+            'squery' => $squery,
         ));
     }
 
@@ -151,5 +193,42 @@ class ProfilerController extends BaseController
         }
 
         return $this->callgraph;
+    }
+
+    protected function getQuery($params)
+    {
+        $query = '?';
+
+        $i = 1;
+        foreach ($params as $key => $param) {
+            
+            if ($i === 1) {
+                $query .= $key."=".$param;
+            }
+            else {
+                $query .= "&".$key."=".$param;
+            }
+
+            $i++;
+        }
+
+        return $query;
+    }
+
+    protected function getSortedQuery($params)
+    {
+        $query = '';
+
+        $i = 1;
+        foreach ($params as $key => $param) {
+            
+            if ($key != 'sort') {
+                $query .= "&".$key."=".$param;
+            }
+
+            $i++;
+        }
+
+        return $query;
     }
 }
