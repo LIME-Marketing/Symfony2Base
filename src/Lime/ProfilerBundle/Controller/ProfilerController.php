@@ -4,9 +4,8 @@ namespace Lime\ProfilerBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use \XHProfRuns_Default;
-use Lime\ProfilerBundle\Model\Xhprof\xhprof_lib\display\xhprof;
 use Lime\BaseBundle\Controller\BaseController;
+use Lime\ProfilerBundle\Model\Xhprof\XHProf;
 
 /**
  * Description of ProfilerController
@@ -22,14 +21,6 @@ class ProfilerController extends BaseController
     protected $exec;
 
     /**
-     * Class constructor. 
-     */
-    public function __construct()
-    {
-        $this->exec = new xhprof();
-    }
-
-    /**
      *
      * @param Request $request
      * @return Response 
@@ -38,7 +29,7 @@ class ProfilerController extends BaseController
     {
         $this->disableProfiler();
 
-        $xhprof     = new XHProfRuns_Default();
+        $exec       = new XHProf($this->getParameter('lime_profiler.location_reports'));
         $parameters = $_GET;
         $params     = $this->getParameterArray();
 
@@ -47,7 +38,7 @@ class ProfilerController extends BaseController
         }
 
         ob_start();
-        $this->exec->displayXHProfReport($xhprof, $params);
+        $exec->displayXHProfReport($params);
         $output = ob_get_contents();
         ob_end_clean();
 
@@ -58,10 +49,10 @@ class ProfilerController extends BaseController
         ));
     }
 
-    public function callgraphAction()
-    {
-        
-    }
+//    public function callgraphAction()
+//    {
+//        
+//    }
 
     /**
      * Function for retrieving parameters

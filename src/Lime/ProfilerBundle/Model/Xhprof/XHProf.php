@@ -28,185 +28,16 @@
 // @author Kannan Muthukkaruppan
 //
 
-namespace Lime\ProfilerBundle\Model\Xhprof\xhprof_lib\display;
+namespace Lime\ProfilerBundle\Model\Xhprof;
 
-if (!isset($GLOBALS['XHPROF_LIB_ROOT'])) {
-    // by default, the parent directory is XHPROF lib root
-    $GLOBALS['XHPROF_LIB_ROOT'] = realpath(dirname(__FILE__) . '/..');
-}
+use Lime\ProfilerBundle\Model\Xhprof\XHProfLib;
 
-include_once $GLOBALS['XHPROF_LIB_ROOT'] . '/utils/xhprof_lib.php';
-include_once $GLOBALS['XHPROF_LIB_ROOT'] . '/utils/callgraph_utils.php';
-include_once $GLOBALS['XHPROF_LIB_ROOT'] . '/utils/xhprof_runs.php';
+//include_once $GLOBALS['XHPROF_LIB_ROOT'] . '/utils/callgraph_utils.php';
 
-class xhprof
+class XHProf extends XHProfLib
 {
-
-    public function __construct()
-    {
-        $this->vbar = ' class="vbar"';
-        $this->vwbar = ' class="vwbar"';
-        $this->vwlbar = ' class="vwlbar"';
-        $this->vbbar = ' class="vbbar"';
-        $this->vrbar = ' class="vrbar"';
-        $this->vgbar = ' class="vgbar"';
-
-        /**
-         * Our coding convention disallows relative paths in hrefs.
-         * Get the base URL path from the SCRIPT_NAME.
-         */
-        $this->base_path = substr($_SERVER['PHP_SELF'], 0, -1);
-
-        // default column to sort on -- wall time
-        $this->sort_col = "wt";
-
-        // default is "single run" report
-        $this->diff_mode = false;
-
-        // call count data present?
-        $this->display_calls = true;
-
-        // The following column headers are sortable
-        $this->sortable_columns = array("fn" => 1,
-            "ct" => 1,
-            "wt" => 1,
-            "excl_wt" => 1,
-            "ut" => 1,
-            "excl_ut" => 1,
-            "st" => 1,
-            "excl_st" => 1,
-            "mu" => 1,
-            "excl_mu" => 1,
-            "pmu" => 1,
-            "excl_pmu" => 1,
-            "cpu" => 1,
-            "excl_cpu" => 1,
-            "samples" => 1,
-            "excl_samples" => 1
-        );
-
-        // Textual descriptions for column headers in "single run" mode
-        $this->descriptions = array(
-            "fn" => "Function Name",
-            "ct" => "Calls",
-            "Calls%" => "Calls%",
-            "wt" => "Incl. Wall Time<br>(microsec)",
-            "IWall%" => "IWall%",
-            "excl_wt" => "Excl. Wall Time<br>(microsec)",
-            "EWall%" => "EWall%",
-            "ut" => "Incl. User<br>(microsecs)",
-            "IUser%" => "IUser%",
-            "excl_ut" => "Excl. User<br>(microsec)",
-            "EUser%" => "EUser%",
-            "st" => "Incl. Sys <br>(microsec)",
-            "ISys%" => "ISys%",
-            "excl_st" => "Excl. Sys <br>(microsec)",
-            "ESys%" => "ESys%",
-            "cpu" => "Incl. CPU<br>(microsecs)",
-            "ICpu%" => "ICpu%",
-            "excl_cpu" => "Excl. CPU<br>(microsec)",
-            "ECpu%" => "ECPU%",
-            "mu" => "Incl.<br>MemUse<br>(bytes)",
-            "IMUse%" => "IMemUse%",
-            "excl_mu" => "Excl.<br>MemUse<br>(bytes)",
-            "EMUse%" => "EMemUse%",
-            "pmu" => "Incl.<br> PeakMemUse<br>(bytes)",
-            "IPMUse%" => "IPeakMemUse%",
-            "excl_pmu" => "Excl.<br>PeakMemUse<br>(bytes)",
-            "EPMUse%" => "EPeakMemUse%",
-            "samples" => "Incl. Samples",
-            "ISamples%" => "ISamples%",
-            "excl_samples" => "Excl. Samples",
-            "ESamples%" => "ESamples%",
-        );
-
-        // Formatting Callback Functions...
-        $this->format_cbk = array(
-            "fn" => "",
-            "ct" => "xhprof_count_format",
-            "Calls%" => "xhprof_percent_format",
-            "wt" => "number_format",
-            "IWall%" => "xhprof_percent_format",
-            "excl_wt" => "number_format",
-            "EWall%" => "xhprof_percent_format",
-            "ut" => "number_format",
-            "IUser%" => "xhprof_percent_format",
-            "excl_ut" => "number_format",
-            "EUser%" => "xhprof_percent_format",
-            "st" => "number_format",
-            "ISys%" => "xhprof_percent_format",
-            "excl_st" => "number_format",
-            "ESys%" => "xhprof_percent_format",
-            "cpu" => "number_format",
-            "ICpu%" => "xhprof_percent_format",
-            "excl_cpu" => "number_format",
-            "ECpu%" => "xhprof_percent_format",
-            "mu" => "number_format",
-            "IMUse%" => "xhprof_percent_format",
-            "excl_mu" => "number_format",
-            "EMUse%" => "xhprof_percent_format",
-            "pmu" => "number_format",
-            "IPMUse%" => "xhprof_percent_format",
-            "excl_pmu" => "number_format",
-            "EPMUse%" => "xhprof_percent_format",
-            "samples" => "number_format",
-            "ISamples%" => "xhprof_percent_format",
-            "excl_samples" => "number_format",
-            "ESamples%" => "xhprof_percent_format",
-        );
-
-
-        // Textual descriptions for column headers in "diff" mode
-        $this->diff_descriptions = array(
-            "fn" => "Function Name",
-            "ct" => "Calls Diff",
-            "Calls%" => "Calls<br>Diff%",
-            "wt" => "Incl. Wall<br>Diff<br>(microsec)",
-            "IWall%" => "IWall<br> Diff%",
-            "excl_wt" => "Excl. Wall<br>Diff<br>(microsec)",
-            "EWall%" => "EWall<br>Diff%",
-            "ut" => "Incl. User Diff<br>(microsec)",
-            "IUser%" => "IUser<br>Diff%",
-            "excl_ut" => "Excl. User<br>Diff<br>(microsec)",
-            "EUser%" => "EUser<br>Diff%",
-            "cpu" => "Incl. CPU Diff<br>(microsec)",
-            "ICpu%" => "ICpu<br>Diff%",
-            "excl_cpu" => "Excl. CPU<br>Diff<br>(microsec)",
-            "ECpu%" => "ECpu<br>Diff%",
-            "st" => "Incl. Sys Diff<br>(microsec)",
-            "ISys%" => "ISys<br>Diff%",
-            "excl_st" => "Excl. Sys Diff<br>(microsec)",
-            "ESys%" => "ESys<br>Diff%",
-            "mu" => "Incl.<br>MemUse<br>Diff<br>(bytes)",
-            "IMUse%" => "IMemUse<br>Diff%",
-            "excl_mu" => "Excl.<br>MemUse<br>Diff<br>(bytes)",
-            "EMUse%" => "EMemUse<br>Diff%",
-            "pmu" => "Incl.<br> PeakMemUse<br>Diff<br>(bytes)",
-            "IPMUse%" => "IPeakMemUse<br>Diff%",
-            "excl_pmu" => "Excl.<br>PeakMemUse<br>Diff<br>(bytes)",
-            "EPMUse%" => "EPeakMemUse<br>Diff%",
-            "samples" => "Incl. Samples Diff",
-            "ISamples%" => "ISamples Diff%",
-            "excl_samples" => "Excl. Samples Diff",
-            "ESamples%" => "ESamples Diff%",
-        );
-
-        // columns that'll be displayed in a top-level report
-        $this->stats = array();
-
-        // columns that'll be displayed in a function's parent/child report
-        $this->pc_stats = array();
-
-        // Various total counts
-        $this->totals = 0;
-        $this->totals_1 = 0;
-        $this->totals_2 = 0;
-
-        /*
-         * The subset of $this->possible_metrics that is present in the raw profile data.
-         */
-        $this->metrics = null;
-    }
+    protected $xhprof_lib;
+    protected $xhprof_runs;
 
     /**
      * Generate references to required stylesheets & javascript.
@@ -407,105 +238,6 @@ class xhprof
     }
 
     /**
-     * Initialize the metrics we'll display based on the information
-     * in the raw data.
-     *
-     * @author Kannan
-     */
-    function init_metrics($xhprof_data, $rep_symbol, $sort, $diff_report = false)
-    {
-//        global $this->stats;
-//        global $this->pc_stats;
-//        global $this->metrics;
-//        global $this->diff_mode;
-//        global $this->sortable_columns;
-//        global $this->sort_col;
-//        global $this->display_calls;
-//        $this->sortable_columns = array(
-//            "fn" => 1,
-//            "ct" => 1,
-//            "wt" => 1,
-//            "excl_wt" => 1,
-//            "ut" => 1,
-//            "excl_ut" => 1,
-//            "st" => 1,
-//            "excl_st" => 1,
-//            "mu" => 1,
-//            "excl_mu" => 1,
-//            "pmu" => 1,
-//            "excl_pmu" => 1,
-//            "cpu" => 1,
-//            "excl_cpu" => 1,
-//            "samples" => 1,
-//            "excl_samples" => 1
-//        );
-
-        $this->diff_mode = $diff_report;
-
-        if (!empty($sort)) {
-            if (array_key_exists($sort, $this->sortable_columns)) {
-                $this->sort_col = $sort;
-            }
-            else {
-                print("Invalid Sort Key $sort specified in URL");
-            }
-        }
-
-        // For C++ profiler runs, walltime attribute isn't present.
-        // In that case, use "samples" as the default sort column.
-        if (!isset($xhprof_data["main()"]["wt"])) {
-
-            if ($this->sort_col == "wt") {
-                $this->sort_col = "samples";
-            }
-
-            // C++ profiler data doesn't have call counts.
-            // ideally we should check to see if "ct" metric
-            // is present for "main()". But currently "ct"
-            // metric is artificially set to 1. So, relying
-            // on absence of "wt" metric instead.
-            $this->display_calls = false;
-        }
-        else {
-            $this->display_calls = false;
-//            $this->display_calls = true;
-        }
-
-        // parent/child report doesn't support exclusive times yet.
-        // So, change sort hyperlinks to closest fit.
-        if (!empty($rep_symbol)) {
-            $this->sort_col = str_replace("excl_", "", $this->sort_col);
-        }
-
-        if ($this->display_calls) {
-            $this->stats = array("fn", "ct", "Calls%");
-        }
-        else {
-            $this->stats = array("fn");
-        }
-
-        $this->pc_stats = $this->stats;
-
-        $possible_metrics = xhprof_get_possible_metrics($xhprof_data);
-        foreach ($possible_metrics as $metric => $desc) {
-            if (isset($xhprof_data["main()"][$metric])) {
-                $this->metrics[] = $metric;
-                // flat (top-level reports): we can compute
-                // exclusive metrics reports as well.
-                $this->stats[] = $metric;
-                $this->stats[] = "I" . $desc[0] . "%";
-                $this->stats[] = "excl_" . $metric;
-                $this->stats[] = "E" . $desc[0] . "%";
-
-                // parent/child report for a function: we can
-                // only breakdown inclusive times correctly.
-                $this->pc_stats[] = $metric;
-                $this->pc_stats[] = "I" . $desc[0] . "%";
-            }
-        }
-    }
-
-    /**
      * Get the appropriate description for a statistic
      * (depending upon whether we are in diff report mode
      * or single run report mode).
@@ -547,38 +279,38 @@ class xhprof
         // That way compute_flat_info()/compute_diff() etc. do not have
         // to needlessly work hard on churning irrelevant data.
         if (!empty($rep_symbol)) {
-            $run1_data = xhprof_trim_run($run1_data, array($rep_symbol));
+            $run1_data = $this->xhprof_trim_run($run1_data, array($rep_symbol));
             if ($this->diff_mode) {
-                $run2_data = xhprof_trim_run($run2_data, array($rep_symbol));
+                $run2_data = $this->xhprof_trim_run($run2_data, array($rep_symbol));
             }
         }
 
         if ($this->diff_mode) {
-            $run_delta = xhprof_compute_diff($run1_data, $run2_data);
-            $symbol_tab = xhprof_compute_flat_info($run_delta, $this->totals);
-            $symbol_tab1 = xhprof_compute_flat_info($run1_data, $this->totals_1);
-            $symbol_tab2 = xhprof_compute_flat_info($run2_data, $this->totals_2);
+            $run_delta = $this->xhprof_compute_diff($run1_data, $run2_data);
+            $symbol_tab = $this->xhprof_compute_flat_info($run_delta, $this->totals);
+            $symbol_tab1 = $this->xhprof_compute_flat_info($run1_data, $this->totals_1);
+            $symbol_tab2 = $this->xhprof_compute_flat_info($run2_data, $this->totals_2);
         }
         else {
-            $symbol_tab = xhprof_compute_flat_info($run1_data, $this->totals);
+            $symbol_tab = $this->xhprof_compute_flat_info($run1_data, $this->totals);
         }
 
         $run1_txt = sprintf("<b>Run #%s:</b> %s", $run1, $run1_desc);
 
-        $base_url_params = xhprof_array_unset(xhprof_array_unset($url_params, 'symbol'), 'all');
+        $base_url_params = $this->xhprof_array_unset($this->xhprof_array_unset($url_params, 'symbol'), 'all');
 
         $top_link_query_string = "$this->base_path/?" . http_build_query($base_url_params);
 
         if ($this->diff_mode) {
             $diff_text = "Diff";
-            $base_url_params = xhprof_array_unset($base_url_params, 'run1');
-            $base_url_params = xhprof_array_unset($base_url_params, 'run2');
+            $base_url_params = $this->xhprof_array_unset($base_url_params, 'run1');
+            $base_url_params = $this->xhprof_array_unset($base_url_params, 'run2');
             $run1_link = $this->xhprof_render_link('View Run #' . $run1, "$this->base_path/?" .
-                    http_build_query(xhprof_array_set($base_url_params, 'run', $run1)));
+                    http_build_query($this->xhprof_array_set($base_url_params, 'run', $run1)));
             $run2_txt = sprintf("<b>Run #%s:</b> %s", $run2, $run2_desc);
 
             $run2_link = $this->xhprof_render_link('View Run #' . $run2, "$this->base_path/?" .
-                    http_build_query(xhprof_array_set($base_url_params, 'run', $run2)));
+                    http_build_query($this->xhprof_array_set($base_url_params, 'run', $run2)));
         }
         else {
             $diff_text = "Run";
@@ -766,7 +498,7 @@ class xhprof
         }
 
         $href = "$this->base_path/?" .
-                http_build_query(xhprof_array_set($url_params, 'symbol', $info["fn"]));
+                http_build_query($this->xhprof_array_set($url_params, 'symbol', $info["fn"]));
 
         print('<td>');
         print($this->xhprof_render_link($info["fn"], $href));
@@ -812,7 +544,7 @@ class xhprof
         }
         else {
             $display_link = $this->xhprof_render_link(" [ <b class=bubble>display all </b>]", "$this->base_path/?" .
-                    http_build_query(xhprof_array_set($url_params, 'all', 1)));
+                    http_build_query($this->xhprof_array_set($url_params, 'all', 1)));
         }
 
         print("<h3 align=center>$title $display_link</h3><br>");
@@ -825,7 +557,7 @@ class xhprof
             $desc = $this->stat_description($stat);
             if (array_key_exists($stat, $this->sortable_columns)) {
                 $href = "$this->base_path/?"
-                        . http_build_query(xhprof_array_set($url_params, 'sort', $stat));
+                        . http_build_query($this->xhprof_array_set($url_params, 'sort', $stat));
                 $header = $this->xhprof_render_link($desc, $href);
             }
             else {
@@ -880,15 +612,15 @@ class xhprof
 //        global $this->display_calls;
 //        $this->base_path = substr($_SERVER['PHP_SELF'], 0, -1);
 
-        $possible_metrics = xhprof_get_possible_metrics();
+        $possible_metrics = $this->xhprof_get_possible_metrics();
 
         if ($this->diff_mode) {
 
-            $base_url_params = xhprof_array_unset(xhprof_array_unset($url_params, 'run1'), 'run2');
+            $base_url_params = $this->xhprof_array_unset($this->xhprof_array_unset($url_params, 'run1'), 'run2');
             $href1 = "$this->base_path/?" .
-                    http_build_query(xhprof_array_set($base_url_params, 'run', $run1));
+                    http_build_query($this->xhprof_array_set($base_url_params, 'run', $run1));
             $href2 = "$this->base_path/?" .
-                    http_build_query(xhprof_array_set($base_url_params, 'run', $run2));
+                    http_build_query($this->xhprof_array_set($base_url_params, 'run', $run2));
 
             print("<h3><center>Overall Diff Summary</center></h3>");
             print('<table border=1 cellpadding=2 cellspacing=1 width="30%" '
@@ -1058,7 +790,7 @@ class xhprof
         $odd_even = 0;
         foreach ($results as $info) {
             $href = "$this->base_path/?" .
-                    http_build_query(xhprof_array_set($url_params, 'symbol', $info["fn"]));
+                    http_build_query($this->xhprof_array_set($url_params, 'symbol', $info["fn"]));
             $odd_even = 1 - $odd_even;
 
             if ($odd_even) {
@@ -1110,7 +842,7 @@ class xhprof
 //        global $this->display_calls;
         $this->base_path = substr($_SERVER['PHP_SELF'], 0, -1);
 
-        $possible_metrics = xhprof_get_possible_metrics();
+        $possible_metrics = $this->xhprof_get_possible_metrics();
 
         if ($this->diff_mode) {
             $diff_text = "<b>Diff</b>";
@@ -1123,11 +855,11 @@ class xhprof
 
         if ($this->diff_mode) {
 
-            $base_url_params = xhprof_array_unset(xhprof_array_unset($url_params, 'run1'), 'run2');
+            $base_url_params = $this->xhprof_array_unset($this->xhprof_array_unset($url_params, 'run1'), 'run2');
             $href1 = "$this->base_path?"
-                    . http_build_query(xhprof_array_set($base_url_params, 'run', $run1));
+                    . http_build_query($this->xhprof_array_set($base_url_params, 'run', $run1));
             $href2 = "$this->base_path?"
-                    . http_build_query(xhprof_array_set($base_url_params, 'run', $run2));
+                    . http_build_query($this->xhprof_array_set($base_url_params, 'run', $run2));
 
             print("<h3 align=center>$regr_impr summary for $rep_symbol<br><br></h3>");
             print('<table border=1 cellpadding=2 cellspacing=1 width="30%" '
@@ -1198,7 +930,7 @@ class xhprof
         print("Parent/Child $regr_impr report for <b>$rep_symbol</b>");
 
         $callgraph_href = "$this->base_path/callgraph.php?"
-                . http_build_query(xhprof_array_set($url_params, 'func', $rep_symbol));
+                . http_build_query($this->xhprof_array_set($url_params, 'func', $rep_symbol));
 
         print(" <a href='$callgraph_href'>[View Callgraph $diff_text]</a><br>");
 
@@ -1213,7 +945,7 @@ class xhprof
             if (array_key_exists($stat, $this->sortable_columns)) {
 
                 $href = "$this->base_path/?" .
-                        http_build_query(xhprof_array_set($url_params, 'sort', $stat));
+                        http_build_query($this->xhprof_array_set($url_params, 'sort', $stat));
                 $header = $this->xhprof_render_link($desc, $href);
             }
             else {
@@ -1277,7 +1009,7 @@ class xhprof
             $base_info[$metric] = $symbol_info[$metric];
         }
         foreach ($run_data as $parent_child => $info) {
-            list($parent, $child) = xhprof_parse_parent_child($parent_child);
+            list($parent, $child) = $this->xhprof_parse_parent_child($parent_child);
             if (($child == $rep_symbol) && ($parent)) {
                 $info_tmp = $info;
                 $info_tmp["fn"] = $parent;
@@ -1294,7 +1026,7 @@ class xhprof
         $results = array();
         $base_ct = 0;
         foreach ($run_data as $parent_child => $info) {
-            list($parent, $child) = xhprof_parse_parent_child($parent_child);
+            list($parent, $child) = $this->xhprof_parse_parent_child($parent_child);
             if ($parent == $rep_symbol) {
                 $info_tmp = $info;
                 $info_tmp["fn"] = $child;
@@ -1376,7 +1108,7 @@ class xhprof
      * as arguments. The first argument is an object that implements
      * the iXHProfRuns interface.
      *
-     * @param object  $xhprof_runs_impl  An object that implements
+     * @param object  $this->xhprof_runs  An object that implements
      *                                   the iXHProfRuns interface
      * .
      * @param array   $url_params   Array of non-default URL params.
@@ -1405,7 +1137,7 @@ class xhprof
      * @param string  $run2         New run id (for diff reports)
      *
      */
-    function displayXHProfReport($xhprof_runs_impl, $url_params)
+    function displayXHProfReport($url_params)
     {
 
         if ($url_params['run']) {
@@ -1418,7 +1150,7 @@ class xhprof
         $runs_array = explode(",", $url_params['run']);
 
             if (count($runs_array) == 1) {
-                $xhprof_data = $xhprof_runs_impl->get_run($runs_array[0], $url_params['source'], $description);
+                $xhprof_data = $this->get_run($runs_array[0], $url_params['source'], $description);
             }
             else {
                 if (!empty($url_params['wts'])) {
@@ -1427,7 +1159,7 @@ class xhprof
                 else {
                     $wts_array = null;
                 }
-                $data = xhprof_aggregate_runs($xhprof_runs_impl, $runs_array, $wts_array, $url_params['source'], false);
+                $data = $this->xhprof_aggregate_runs($this->xhprof_runs, $runs_array, $wts_array, $url_params['source'], false);
                 $xhprof_data = $data['raw'];
                 $description = $data['description'];
             }
@@ -1436,8 +1168,8 @@ class xhprof
             $this->profiler_single_run_report($url_params, $xhprof_data, $description, $url_params['symbol'], $url_params['sort'], $url_params['run']);
         }
         else if ($url_params['run1'] && $url_params['run2']) {                  // diff report for two runs
-            $xhprof_data1 = $xhprof_runs_impl->get_run($url_params['run1'], $url_params['source'], $description1);
-            $xhprof_data2 = $xhprof_runs_impl->get_run($url_params['run2'], $url_params['source'], $description2);
+            $xhprof_data1 = $this->get_run($url_params['run1'], $url_params['source'], $description1);
+            $xhprof_data2 = $this->get_run($url_params['run2'], $url_params['source'], $description2);
 
             $this->profiler_diff_report($url_params, $xhprof_data1, $description1, $xhprof_data2, $description2, $url_params['symbol'], $url_params['sort'], $url_params['run1'], $url_params['run2']);
         }

@@ -8,6 +8,3 @@
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^(.*)$ app.php [QSA,L]
 </IfModule>
-
-#php_value extension xhprof.so
-php_value xhprof.output_dir /var/tmp/xhprof

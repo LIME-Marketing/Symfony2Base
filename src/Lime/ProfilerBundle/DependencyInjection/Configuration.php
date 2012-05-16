@@ -26,10 +26,10 @@ class Configuration
 
         $rootNode
             ->children()
-                ->scalarNode('location_config')->defaultValue('/opt/local/www/php5-xhprof/xhprof_lib/config.php')->end()
-                ->scalarNode('location_lib')->defaultValue('/opt/local/www/php5-xhprof/xhprof_lib/utils/xhprof_lib.php')->end()
-                ->scalarNode('location_runs')->defaultValue('/opt/local/www/php5-xhprof/xhprof_lib/utils/xhprof_runs.php')->end()
-                ->scalarNode('location_web')->defaultValue('http://xhprof')->end()
+//                ->scalarNode('location_config')->defaultValue('/opt/local/www/php5-xhprof/xhprof_lib/config.php')->end()
+//                ->scalarNode('location_lib')->defaultValue('/opt/local/www/php5-xhprof/xhprof_lib/utils/xhprof_lib.php')->end()
+//                ->scalarNode('location_runs')->defaultValue('/opt/local/www/php5-xhprof/xhprof_lib/utils/xhprof_runs.php')->end()
+                ->scalarNode('location_reports')->defaultNull()->end()
                 ->scalarNode('enabled')->defaultFalse()->end()
             ->end();
 

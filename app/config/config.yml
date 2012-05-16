@@ -105,9 +105,3 @@ sensio_framework_extra:
     view:    { annotations: false }
     router:  { annotations: true }
 
-lime_profiler:
-    location_lib:    %kernel.root_dir%/../src/Lime/ProfilerBundle/Model/Xhprof/xhprof_lib/utils/xhprof_lib.php
-    location_runs:   %kernel.root_dir%/../src/Lime/ProfilerBundle/Model/Xhprof/xhprof_lib/utils/xhprof_runs.php
-    location_config: %kernel.root_dir%/../src/Lime/ProfilerBundle/Model/Xhprof/xhprof_lib/utils/callgraph_utils.php
-    location_web:    http://dev.xhprof.com/index.php
-    enabled:         true

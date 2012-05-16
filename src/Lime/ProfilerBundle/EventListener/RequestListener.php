@@ -30,19 +30,32 @@ class RequestListener
 
     public function onCoreRequest(GetResponseEvent $event)
     {
-        if (HttpKernelInterface::MASTER_REQUEST === $event->getRequestType() &&
-            $event->getRequest()->server->get('PHP_SELF') !== '/app_dev.php/_memory_profiler/') {
-
+        if ($this->checkUri($event)) {
             $this->collector->startProfiling();
         }
     }
 
     public function onCoreResponse(FilterResponseEvent $event)
     {
-        if (HttpKernelInterface::MASTER_REQUEST === $event->getRequestType() &&
-            $event->getRequest()->server->get('PHP_SELF') !== '/app_dev.php/_memory_profiler/') {
-
+        if ($this->checkUri($event)) {
             $this->collector->stopProfiling();
         }
+    }
+
+    protected function checkUri($event)
+    {
+        $uri = $event->getRequest()->server->get('PHP_SELF');
+
+        if (
+            function_exists('xhprof_enable') &&
+            HttpKernelInterface::MASTER_REQUEST === $event->getRequestType() &&
+            strpos($uri, '/app_dev.php/_memory_profiler/') === false &&
+            strpos($uri, '/app_dev.php/_wdt/') === false &&
+            strpos($uri, '/app_dev.php/_profiler/') === false
+        ) {
+            return true;
+        }
+
+        return false;
     }
 }

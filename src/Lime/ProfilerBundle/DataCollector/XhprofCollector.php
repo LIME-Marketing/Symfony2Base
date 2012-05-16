@@ -8,7 +8,7 @@ use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use XHProfRuns_Default;
+use Lime\ProfilerBundle\Model\Xhprof\XHProf;
 
 /**
  * XhprofDataCollector.
@@ -21,6 +21,7 @@ class XhprofCollector extends DataCollector
     protected $logger;
     protected $runId;
     protected $profiling = false;
+    protected $xhprof;
 
     public function __construct(ContainerInterface $container, LoggerInterface $logger = null)
     {
@@ -33,53 +34,66 @@ class XhprofCollector extends DataCollector
      */
     public function collect(Request $request, Response $response, \Exception $exception = null)
     {
-        if (!$this->runId) {
-            $this->stopProfiling();
-        }
+        if ($this->functionCheck()) {
 
-        $this->data = array(
-            'xhprof' => $this->runId,
-            'xhprof_url' => $this->container->getParameter('lime_profiler.location_web'),
-        );
+            if (!$this->runId) {
+                $this->stopProfiling();
+            }
+
+            $this->data = array(
+                'xhprof' => $this->runId,
+            );
+        }
     }
 
     public function startProfiling()
     {
-        if (PHP_SAPI == 'cli') {
-            $_SERVER['REMOTE_ADDR'] = null;
-            $_SERVER['REQUEST_URI'] = $_SERVER['SCRIPT_NAME'];
-        }
+        if ($this->functionCheck()) {
 
-        $this->profiling = true;
-        xhprof_enable(XHPROF_FLAGS_CPU + XHPROF_FLAGS_MEMORY);
+            if (PHP_SAPI == 'cli') {
+                $_SERVER['REMOTE_ADDR'] = null;
+                $_SERVER['REQUEST_URI'] = $_SERVER['SCRIPT_NAME'];
+            }
 
-        if ($this->logger) {
-            $this->logger->debug('Enabled XHProf');
+            $this->profiling = true;
+            xhprof_enable(XHPROF_FLAGS_CPU + XHPROF_FLAGS_MEMORY);
+
+            if ($this->logger) {
+                $this->logger->debug('Enabled XHProf');
+            }
         }
     }
 
     public function stopProfiling()
     {
-        global $_xhprof;
+        
+        if ($this->functionCheck()) {
 
-        if (!$this->profiling) {
-            return;
+            global $_xhprof;
+
+            if (!$this->profiling) {
+                return;
+            }
+
+            $this->profiling = false;
+
+//            require_once $this->container->getParameter('lime_profiler.location_config');
+//            require_once $this->container->getParameter('lime_profiler.location_lib');
+//            require_once $this->container->getParameter('lime_profiler.location_runs');
+
+            $xhprof_data = xhprof_disable();
+
+            if ($this->logger) {
+                $this->logger->debug('Disabled XHProf');
+            }
+
+            $uri = $this->container->get('request')->server->get('REQUEST_URI');
+            $uri = str_replace('/', '_', $uri);
+            $uri = str_replace('_app_dev.php', 'app_dev.php', $uri);
+
+            $xhprof_runs = new XHProf($this->container->getParameter('lime_profiler.location_reports'));
+            $this->runId = $xhprof_runs->save_run($xhprof_data, "Symfony", $uri);
         }
-
-        $this->profiling = false;
-
-        require_once $this->container->getParameter('lime_profiler.location_config');
-        require_once $this->container->getParameter('lime_profiler.location_lib');
-        require_once $this->container->getParameter('lime_profiler.location_runs');
-
-        $xhprof_data = xhprof_disable();
-
-        if ($this->logger) {
-            $this->logger->debug('Disabled XHProf');
-        }
-
-        $xhprof_runs = new XHProfRuns_Default();
-        $this->runId = $xhprof_runs->save_run($xhprof_data, "Symfony");
     }
 
     /**
@@ -87,7 +101,9 @@ class XhprofCollector extends DataCollector
      */
     public function getName()
     {
-        return 'xhprof';
+        if ($this->functionCheck()) {
+            return 'xhprof';
+        }
     }
 
     /**
@@ -97,7 +113,9 @@ class XhprofCollector extends DataCollector
      */
     public function getXhprof()
     {
-        return $this->data['xhprof'];
+        if ($this->functionCheck()) {
+            return $this->data['xhprof'];
+        }
     }
 
     /**
@@ -107,6 +125,13 @@ class XhprofCollector extends DataCollector
      */
     public function getXhprofUrl()
     {
-        return $_SERVER['SCRIPT_NAME'] . '/_memory_profiler/?run=' . $this->data['xhprof'] . '&source=Symfony';
+        if ($this->functionCheck()) {
+            return $_SERVER['SCRIPT_NAME'] . '/_memory_profiler/?run=' . $this->data['xhprof'] . '&source=Symfony';
+        }
+    }
+
+    protected function functionCheck()
+    {
+        return function_exists('xhprof_enable');
     }
 }

@@ -21,3 +21,8 @@ monolog:
 
 assetic:
     use_controller: true
+
+lime_profiler:
+    location_reports: %kernel.root_dir%/../app/memory_reports
+    enabled:          true
+
