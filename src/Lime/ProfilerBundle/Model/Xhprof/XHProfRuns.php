@@ -216,7 +216,7 @@ class XHProfRuns implements XHProfRunsInterface
         return unserialize($contents);
     }
 
-    public function save_run($xhprof_data, $type, $uri = null, $run_id = null)
+    public function save_run($xhprof_data, $type, $run_id = null)
     {
         $xhprof_data = serialize($xhprof_data);
 
@@ -224,7 +224,7 @@ class XHProfRuns implements XHProfRunsInterface
             $run_id = $this->gen_run_id($type);
         }
 
-        $run_name = $uri."_".$run_id;
+        $run_name = $run_id;
 
         $file_name = $this->file_name($run_name, $type);
         $file      = fopen($file_name, 'w');

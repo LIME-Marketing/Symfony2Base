@@ -1,3 +1,7 @@
 lime_profiler_profiler_index:
     pattern: /_memory_profiler/
     defaults: { _controller: LimeProfilerBundle:Profiler:index }
+
+lime_profiler_profiler_callgraph:
+    pattern: /_memory_profiler/callgraph/
+    defaults: { _controller: LimeProfilerBundle:Profiler:callgraph }

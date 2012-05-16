@@ -12,11 +12,9 @@ use Symfony\Component\Config\FileLocator;
 class LimeProfilerExtension extends Extension
 {
     /**
-     * Xml config files to load
      * @var array
      */
     protected $resources = array(
-//        'services' => 'services.xml',
         'services' => 'services.yml',
     );
     
@@ -54,7 +52,6 @@ class LimeProfilerExtension extends Extension
     public function getFileLoader($container)
     {
         return new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
-//        return new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
     }
 
     protected function loadDefaults($container)

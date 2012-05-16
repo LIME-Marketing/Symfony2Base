@@ -1,5 +1,11 @@
 <?php
 
+namespace Lime\ProfilerBundle\Model\Xhprof;
+
+use Lime\ProfilerBundle\Model\Xhprof\XHProfLib;
+use Lime\ProfilerBundle\Model\Entity\Report;
+use Lime\ProfilerBundle\Model\Entity\IndFunction;
+
 //  Copyright (c) 2009 Facebook
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,12 +33,6 @@
 //
 // @author Kannan Muthukkaruppan
 //
-
-namespace Lime\ProfilerBundle\Model\Xhprof;
-
-use Lime\ProfilerBundle\Model\Xhprof\XHProfLib;
-
-//include_once $GLOBALS['XHPROF_LIB_ROOT'] . '/utils/callgraph_utils.php';
 
 class XHProf extends XHProfLib
 {
@@ -207,9 +207,6 @@ class XHProf extends XHProfLib
      */
     function sort_cbk($a, $b)
     {
-//        global $this->sort_col;
-//        global $this->diff_mode;
-
         if ($this->sort_col == "fn") {
 
             // case insensitive ascending sort for function names
@@ -246,9 +243,6 @@ class XHProf extends XHProfLib
      */
     function stat_description($stat)
     {
-//        global $this->descriptions;
-//        global $this->diff_descriptions;
-//        global $this->diff_mode;
 
         if ($this->diff_mode) {
             return $this->diff_descriptions[$stat];
@@ -266,18 +260,8 @@ class XHProf extends XHProfLib
      */
     function profiler_report($url_params, $rep_symbol, $sort, $run1, $run1_desc, $run1_data, $run2 = 0, $run2_desc = "", $run2_data = array())
     {
-//        global $this->totals;
-//        global $this->totals_1;
-//        global $this->totals_2;
-//        global $this->stats;
-//        global $this->pc_stats;
-//        global $this->diff_mode;
         $this->base_path = substr($_SERVER['PHP_SELF'], 0, -1);
 
-        // if we are reporting on a specific function, we can trim down
-        // the report(s) to just stuff that is relevant to this function.
-        // That way compute_flat_info()/compute_diff() etc. do not have
-        // to needlessly work hard on churning irrelevant data.
         if (!empty($rep_symbol)) {
             $run1_data = $this->xhprof_trim_run($run1_data, array($rep_symbol));
             if ($this->diff_mode) {
@@ -332,24 +316,7 @@ class XHProf extends XHProfLib
                     http_build_query($inverted_params));
         }
 
-        // lookup function typeahead form
-//        $links [] = '<input class="function_typeahead" ' .
-//                ' type="input" size="40" maxlength="100" />';
-
         echo $this->xhprof_render_actions($links);
-
-
-//        echo
-//        '<dl class=phprof_report_info>' .
-//        '  <dt>' . $diff_text . ' Report</dt>' .
-//        '  <dd>' . ($this->diff_mode ?
-//                $run1_txt . '<br><b>vs.</b><br>' . $run2_txt :
-//                $run1_txt) .
-//        '  </dd>' .
-//        '  <dt>Tip</dt>' .
-//        '  <dd>Click a function name below to drill down.</dd>' .
-//        '</dl>' .
-//        '<div style="clear: both; margin: 3em 0em;"></div>';
 
         // data tables
         if (!empty($rep_symbol)) {
@@ -409,12 +376,6 @@ class XHProf extends XHProfLib
      */
     function get_print_class($num, $bold)
     {
-//        global $this->vbar;
-//        global $this->vbbar;
-//        global $this->vrbar;
-//        global $this->vgbar;
-//        global $this->diff_mode;
-
         if ($bold) {
             if ($this->diff_mode) {
                 if ($num <= 0) {
@@ -444,7 +405,7 @@ class XHProf extends XHProfLib
         $class = $this->get_print_class($num, $bold);
 
         if (!empty($fmt_func)) {
-            $num = call_user_func($fmt_func, $num);
+            $num = call_user_func($fmt_func, (int)$num);
         }
 
         print("<td $attributes $class>$num</td>\n");
@@ -455,10 +416,6 @@ class XHProf extends XHProfLib
      */
     function print_td_pct($numer, $denom, $bold = false, $attributes = null)
     {
-//        global $this->vbar;
-//        global $this->vbbar;
-//        global $this->diff_mode;
-
         $class = $this->get_print_class($numer, $bold);
 
         if ($denom == 0) {
@@ -472,6 +429,21 @@ class XHProf extends XHProfLib
     }
 
     /**
+     * Prints a <td> element with a pecentage.
+     */
+    function return_pct($numer, $denom)
+    {
+        if ($denom == 0) {
+            $pct = "N/A%";
+        }
+        else {
+            $pct = $this->xhprof_percent_format($numer / abs($denom));
+        }
+
+        return $pct;
+    }
+
+    /**
      * Print "flat" data corresponding to one function.
      *
      * @author Kannan
@@ -480,11 +452,6 @@ class XHProf extends XHProfLib
     {
         static $odd_even = 0;
 
-//        global $this->totals;
-//        global $this->sort_col;
-//        global $this->metrics;
-//        global $this->format_cbk;
-//        global $this->display_calls;
         $this->base_path = substr($_SERVER['PHP_SELF'], 0, -1);
 
         // Toggle $odd_or_even
@@ -531,10 +498,6 @@ class XHProf extends XHProfLib
      */
     function print_flat_data($url_params, $title, $flat_data, $sort, $run1, $run2, $limit)
     {
-
-//        global $this->stats;
-//        global $this->sortable_columns;
-//        global $this->vwbar;
         $this->base_path = substr($_SERVER['PHP_SELF'], 0, -1);
 
         $size = count($flat_data);
@@ -549,9 +512,9 @@ class XHProf extends XHProfLib
 
         print("<h3 align=center>$title $display_link</h3><br>");
 
-        print('<table class="table table-bordered table-condensed" '
+        print('<table class="table table-bordered table-striped" '
                 . '>');
-        print('<thead>');
+        print('<thead style="background-color: #BCD1BD;">');
 
         foreach ($this->stats as $stat) {
             $desc = $this->stat_description($stat);
@@ -599,19 +562,6 @@ class XHProf extends XHProfLib
      */
     function full_report($url_params, $symbol_tab, $sort, $run1, $run2)
     {
-//        global $this->vwbar;
-//        global $this->vbar;
-//        global $this->totals;
-//        global $this->totals_1;
-//        global $this->totals_2;
-//        global $this->metrics;
-//        global $this->diff_mode;
-//        global $this->descriptions;
-//        global $this->sort_col;
-//        global $this->format_cbk;
-//        global $this->display_calls;
-//        $this->base_path = substr($_SERVER['PHP_SELF'], 0, -1);
-
         $possible_metrics = $this->xhprof_get_possible_metrics();
 
         if ($this->diff_mode) {
@@ -668,12 +618,12 @@ class XHProf extends XHProfLib
                 echo "</li>";
             }
 
-//            if ($this->display_calls) {
-//                echo "<tr>";
-//                echo "<td style='text-align:right; font-weight:bold'>Number of Function Calls:</td>";
-//                echo "<td>" . number_format($this->totals['ct']) . "</td>";
-//                echo "</tr>";
-//            }
+            if ($this->display_calls) {
+                echo "<tr>";
+                echo "<td style='text-align:right; font-weight:bold'>Number of Function Calls:</td>";
+                echo "<td>" . number_format($this->totals['ct']) . "</td>";
+                echo "</tr>";
+            }
 
             echo "</ul>";
 
@@ -681,7 +631,7 @@ class XHProf extends XHProfLib
         }
 
         print("<center><br><h3>" .
-                $this->xhprof_render_link($callgraph_report_title, "$this->base_path/callgraph.php" . "?" . http_build_query($url_params))
+                $this->xhprof_render_link($callgraph_report_title, "$this->base_path/callgraph" . "?" . http_build_query($url_params))
                 . "</h3></center>");
 
 
@@ -829,17 +779,6 @@ class XHProf extends XHProfLib
      */
     function symbol_report($url_params, $run_data, $symbol_info, $sort, $rep_symbol, $run1, $symbol_info1 = null, $run2 = 0, $symbol_info2 = null)
     {
-//        global $this->vwbar;
-//        global $this->vbar;
-//        global $this->totals;
-//        global $this->pc_stats;
-//        global $this->sortable_columns;
-//        global $this->metrics;
-//        global $this->diff_mode;
-//        global $this->descriptions;
-//        global $this->format_cbk;
-//        global $this->sort_col;
-//        global $this->display_calls;
         $this->base_path = substr($_SERVER['PHP_SELF'], 0, -1);
 
         $possible_metrics = $this->xhprof_get_possible_metrics();
@@ -900,12 +839,17 @@ class XHProf extends XHProfLib
                 print("<td>" . str_replace("<br>", " ", $this->descriptions[$m]) . " per call </td>");
                 $avg_info1 = 'N/A';
                 $avg_info2 = 'N/A';
-                if ($symbol_info1['ct'] > 0) {
-                    $avg_info1 = ($symbol_info1[$m] / $symbol_info1['ct']);
+
+                if (isset($symbol_info1['ct'])) {
+                    if ($symbol_info1['ct'] > 0) {
+                        $avg_info1 = ($symbol_info1[$m] / $symbol_info1['ct']);
+                    }
+
+                    if ($symbol_info2['ct'] > 0) {
+                        $avg_info2 = ($symbol_info2[$m] / $symbol_info2['ct']);
+                    }
                 }
-                if ($symbol_info2['ct'] > 0) {
-                    $avg_info2 = ($symbol_info2[$m] / $symbol_info2['ct']);
-                }
+
                 $this->print_td_num($avg_info1, $this->format_cbk[$m]);
                 $this->print_td_num($avg_info2, $this->format_cbk[$m]);
                 $this->print_td_num($avg_info2 - $avg_info1, $this->format_cbk[$m], true);
@@ -929,7 +873,7 @@ class XHProf extends XHProfLib
         print("<br><h4><center>");
         print("Parent/Child $regr_impr report for <b>$rep_symbol</b>");
 
-        $callgraph_href = "$this->base_path/callgraph.php?"
+        $callgraph_href = "$this->base_path/callgraph/?"
                 . http_build_query($this->xhprof_array_set($url_params, 'func', $rep_symbol));
 
         print(" <a href='$callgraph_href'>[View Callgraph $diff_text]</a><br>");

@@ -40,6 +40,7 @@ class XHProfLib extends XHProfRuns
     const XHPROF_BOOL_PARAM   = 4;
 
     public $display_calls;
+    public $params;
 
     /*
     * The list of possible metrics collected as part of XHProf that
@@ -424,7 +425,7 @@ class XHProfLib extends XHProfRuns
     */
     function xhprof_compute_diff($xhprof_data1, $xhprof_data2)
     {
-        $metrics      = $this->xhprof_get_possible_metrics($xhprof_data2);
+        $metrics      = $this->xhprof_get_metrics($xhprof_data2);
         $xhprof_delta = $xhprof_data2;
 
         foreach ($xhprof_data1 as $parent_child => $info) {
@@ -799,8 +800,10 @@ class XHProfLib extends XHProfRuns
                     exit();
             }
 
-            $GLOBALS[$k] = $p;
+            $this->params[$k] = $p;
         }
+
+        return $this->params;
     }
 
 

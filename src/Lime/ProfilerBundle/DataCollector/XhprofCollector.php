@@ -8,7 +8,7 @@ use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Lime\ProfilerBundle\Model\Xhprof\XHProf;
+use Lime\ProfilerBundle\Model\Xhprof\XHProfLib;
 
 /**
  * XhprofDataCollector.
@@ -42,6 +42,7 @@ class XhprofCollector extends DataCollector
 
             $this->data = array(
                 'xhprof' => $this->runId,
+                'source' => $this->container->getParameter('lime_profiler.file_extension'),
             );
         }
     }
@@ -57,6 +58,7 @@ class XhprofCollector extends DataCollector
 
             $this->profiling = true;
             xhprof_enable(XHPROF_FLAGS_CPU + XHPROF_FLAGS_MEMORY);
+            xhprof_enable(XHPROF_FLAGS_NO_BUILTINS);
 
             if ($this->logger) {
                 $this->logger->debug('Enabled XHProf');
@@ -76,23 +78,15 @@ class XhprofCollector extends DataCollector
             }
 
             $this->profiling = false;
-
-//            require_once $this->container->getParameter('lime_profiler.location_config');
-//            require_once $this->container->getParameter('lime_profiler.location_lib');
-//            require_once $this->container->getParameter('lime_profiler.location_runs');
-
-            $xhprof_data = xhprof_disable();
+            $xhprof_data     = xhprof_disable();
 
             if ($this->logger) {
                 $this->logger->debug('Disabled XHProf');
             }
 
-            $uri = $this->container->get('request')->server->get('REQUEST_URI');
-            $uri = str_replace('/', '_', $uri);
-            $uri = str_replace('_app_dev.php', 'app_dev.php', $uri);
-
-            $xhprof_runs = new XHProf($this->container->getParameter('lime_profiler.location_reports'));
-            $this->runId = $xhprof_runs->save_run($xhprof_data, "Symfony", $uri);
+            $xhprof_runs = new XHProfLib($this->container->getParameter('lime_profiler.location_reports'));
+            $extension   = $this->container->getParameter('lime_profiler.file_extension');
+            $this->runId = $xhprof_runs->save_run($xhprof_data, $extension, $this->getFileName());
         }
     }
 
@@ -126,12 +120,26 @@ class XhprofCollector extends DataCollector
     public function getXhprofUrl()
     {
         if ($this->functionCheck()) {
-            return $_SERVER['SCRIPT_NAME'] . '/_memory_profiler/?run=' . $this->data['xhprof'] . '&source=Symfony';
+            return $_SERVER['SCRIPT_NAME'] . '/_memory_profiler/?run=' . $this->data['xhprof'] . '&source=' . $this->data['source'];
         }
     }
 
     protected function functionCheck()
     {
         return function_exists('xhprof_enable');
+    }
+
+    protected function getFileName()
+    {
+        $uri  = 'url:_';
+        $uri .= $this->container->get('request')->server->get('REQUEST_URI');
+        $uri  = str_replace('/', '_', $uri);
+        $uri  = str_replace('_app_dev.php', 'app_dev.php', $uri);
+
+        if (!$this->container->getParameter('lime_profiler.overwrite')) {
+            $uri .= '|date:_'.date('d-m-Y').'|time:_'.date('g:i:sa');
+        }
+
+        return $uri;
     }
 }
