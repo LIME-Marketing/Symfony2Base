@@ -8,7 +8,7 @@ use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\Config\FileLocator;
 
 /**
- * @author Derek Stobbe <djstobbe@gmail.com>
+ * @author Michael Shattuck <ms2474@gmail.com>
  */
 class LimeUserExtension extends Extension
 {

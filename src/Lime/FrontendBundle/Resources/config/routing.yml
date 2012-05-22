@@ -1,3 +1,0 @@
-lime_frontend_page:
-    prefix: /
-    resource: "@LimeFrontendBundle/Resources/config/routing/page.yml"

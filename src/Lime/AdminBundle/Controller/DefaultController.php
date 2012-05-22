@@ -3,26 +3,29 @@
 namespace Lime\AdminBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Lime\BaseBundle\Controller\BaseController;
 
+/**
+ * @author Michael Shattuck <ms2474@gmail.com>
+ */
 class DefaultController extends BaseController
 {
+    /**
+     * @Route("/", name="lime.admin.default.index")
+     * @Template
+     */
     public function indexAction()
     {
-        $repo   = $this->getMessageRepo();
-        $unread = count($repo->findBy(array(
-            'status_read' => false
-        )));
-
-        return $this->render('LimeAdminBundle:Default:index.html.twig', array(
-            'unread'   => $unread,
-        ));
     }
 
+    /**
+     * Twig helper for message count.
+     */
     public function getUnreadMessagesAction()
     {
-        $repo   = $this->getMessageRepo();
-        $unread = count($repo->findBy(array(
+        $unread = count($this->getMessageRepo()->findBy(array(
             'status_read' => false
         )));
 
@@ -31,6 +34,10 @@ class DefaultController extends BaseController
         ));
     }
 
+    /**
+     *
+     * @return \Lime\BaseBundle\Repository\BaseRepository
+     */
     protected function getMessageRepo()
     {
         return $this->getRepo('LimeAdminBundle:Message');

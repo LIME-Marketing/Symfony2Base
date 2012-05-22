@@ -4,19 +4,22 @@ services:
         arguments: [%fos_user.model.user.class%]
         tags:
             - { name: form.type, alias: lime_user_profile }
+
     lime_user.form.type.registration:
         class: Lime\UserBundle\Form\Type\RegistrationFormType
         arguments: [%fos_user.model.user.class%]
         tags:
             - { name: form.type, alias: lime_user_registration }
+
     lime_user.form.handler.registration:
         class: Lime\UserBundle\Form\Handler\RegistrationFormHandler
         arguments: ["@event_dispatcher", "@fos_user.registration.form", "@request", "@fos_user.user_manager", "@fos_user.mailer"]
         scope: request
         public: false
+
     lime_user.listener.registration_profile_creator:
-        class: Lime\UserBundle\EventListener\UserRegistrationProfileSubscriber
+        class: Lime\UserBundle\EventListener\UserEventListener
         arguments:
-            em: "@doctrine.orm.entity_manager"
+            baseRepo: "@base_repository_factory"
         tags:
             - { name: kernel.event_subscriber }

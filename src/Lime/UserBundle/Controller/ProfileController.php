@@ -23,6 +23,7 @@ use Lime\UserBundle\Form\Type\ProfileFormType;
  * Controller managing the user profile
  *
  * @author Christophe Coevoet <stof@notk.org>
+ * @author Michael Shattuck <ms2474@gmail.com>
  */
 class ProfileController extends Controller
 {

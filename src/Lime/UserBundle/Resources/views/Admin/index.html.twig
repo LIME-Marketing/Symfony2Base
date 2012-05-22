@@ -3,7 +3,7 @@
 {% block admin_content %}
     <div>
         <div>
-            <form action="{{ path('lime_user_admin_index') }}" method="get">
+            <form action="{{ path('lime.user.admin.index') }}" method="get">
                 <input type="text" name="searchterm" />
                 <input type="submit" value="Search" />
             </form>
@@ -11,7 +11,7 @@
 
         <div>
             <div>
-                <table class="table table-striped table-condensed">
+                <table class="table table-striped table-bordered">
                     <thead>
                         <th>
                             Username
@@ -27,7 +27,7 @@
                         </th>
                     </thead>
                     <tbody>
-                        {% for user in user %}
+                        {% for user in users %}
                         <tr>
                             <td>
                                 {{ user.username }}
@@ -62,13 +62,13 @@
         {% endif %}
     {% endfor %}
     {% if is_admin %}
-        <form action="{{ path('lime_user_admin_demote') }}" method="post">
+        <form action="{{ path('lime.user.admin.demote') }}" method="post">
             <input type="hidden" id="form_user" name="form[user]" value="{{ user.email }}" />
             <input type="hidden" id="form__token" name="form[_token]" value="{{ token }}">
             <input type="submit" class="btn span2" value="Demote" />
         </form>
     {% else %}
-        <form action="{{ path('lime_user_admin_promote') }}" method="post">
+        <form action="{{ path('lime.user.admin.promote') }}" method="post">
             <input type="hidden" id="form_user" name="form[user]" value="{{ user.email }}" />
             <input type="hidden" id="form__token" name="form[_token]" value="{{ token }}">
             <input type="submit" class="btn span2" value="Promote" />

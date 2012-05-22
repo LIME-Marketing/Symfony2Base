@@ -15,6 +15,10 @@ use Symfony\Component\DependencyInjection\ContainerAware;
 use Symfony\Component\Security\Core\SecurityContext;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
+/**
+ *
+ * @author Michael Shattuck <ms2474@gmail.com> 
+ */
 class SecurityController extends ContainerAware
 {
     public function loginAction()

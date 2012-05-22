@@ -34,9 +34,9 @@
                             {% block nav_items %}
                                 <li><a href="{{ path('_home') }}">Home</a></li>
                                 <li class="divider"></li>
-                                <li><a href="{{ path('lime_frontend_page_about') }}">About</a></li>
+                                <li><a href="{{ path('lime.frontend.page.about') }}">About</a></li>
                                 <li class="divider"></li>
-                                <li><a href="{{ path('lime_frontend_page_contact') }}">Contact Us</a></li>
+                                <li><a href="{{ path('lime.frontend.page.contact') }}">Contact Us</a></li>
                                 {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
                                 <li><a href="{{ path('fos_user_profile_show') }}">My Account</a></li>
                                 {% else %}

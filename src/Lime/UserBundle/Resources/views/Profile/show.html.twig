@@ -10,9 +10,32 @@
 
 {% block fos_user_content %}
     <ul class="nav nav-pills">
-        <li class="active"><a href="{{ path('fos_user_profile_show') }}" ><i class="icon-user icon-white"></i> My Profile</a></li>
-        <li><a href="{{ path('fos_user_profile_edit') }}" ><i class="icon-pencil"></i> Edit Profile</a></li>
-        <li><a href="{{ path('fos_user_security_logout') }}" ><i class="icon-arrow-left"></i> Logout</a></li>
+        <li class="active">
+            <a href="{{ path('fos_user_profile_show') }}">
+                <i class="icon-user icon-white"></i> 
+                My Profile
+            </a>
+        </li>
+        <li>
+            <a href="{{ path('fos_user_profile_edit') }}">
+                <i class="icon-pencil"></i> 
+                Edit Profile
+            </a>
+        </li>
+        {% if is_granted('ROLE_ADMIN') %}
+        <li>
+            <a href="{{ path('lime.admin.default.index') }}">
+                <i class="icon-lock"></i> 
+                Admin Panel
+            </a>
+        </li>
+        {% endif %}
+        <li>
+            <a href="{{ path('fos_user_security_logout') }}">
+                <i class="icon-arrow-left"></i> 
+                Logout
+            </a>
+        </li>
     </ul>
 
     <h3>Contact Information</h3>

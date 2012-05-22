@@ -24,6 +24,7 @@ use FOS\UserBundle\Model\UserInterface;
  *
  * @author Thibault Duplessis <thibault.duplessis@gmail.com>
  * @author Christophe Coevoet <stof@notk.org>
+ * @author Michael Shattuck <ms2474@gmail.com>
  */
 class RegistrationController extends ContainerAware
 {

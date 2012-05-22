@@ -2,15 +2,24 @@
 
 {% block admin_content %}
     <div>
-        <ul>
+        <ul class="nav nav-list">
             <li>
-                <a href="{{ path('lime_admin_config_index') }}">Site Configuration</a>
+                <a href="{{ path('lime.admin.config.index') }}">
+                    <i class="icon-list-alt"></i>
+                    Site Configuration
+                </a>
             </li>
             <li>
-                <a href="{{ path('lime_admin_message_list') }}">Messages {% if unread > 0 %}- {{ unread }} unread messages{% endif %}</a>
+                <a href="{{ path('lime.admin.message.list') }}">
+                    <i class="icon-envelope"></i>
+                    Messages {% render 'LimeAdminBundle:Default:getUnreadMessages' %}
+                </a>
             </li>
             <li>
-                <a href="{{ path('lime_admin_uploader_index') }}">Design Uploader</a>
+                <a href="{{ path('lime.user.admin.index') }}">
+                    <i class="icon-user"></i>
+                    User List
+                </a>
             </li>
         </ul>
     </div>

@@ -102,6 +102,8 @@ fos_rest:
         view_response_listener: force
 
 sensio_framework_extra:
-    view:    { annotations: false }
     router:  { annotations: true }
+    request: { converters: true }
+    view:    { annotations: false }
+    cache:   { annotations: true }
 

@@ -25,8 +25,15 @@ fos_user_change_password:
 
 # Our Routes
 lime_user:
-    resource: "@LimeUserBundle/Resources/config/routing/admin.yml"
-    prefix: /users
+    resource: "@LimeUserBundle/Controller/AdminController.php"
+    prefix:   /admin/users
+    type:     annotation
 
 lime_frontend:
-    resource: "@LimeFrontendBundle/Resources/config/routing.yml"
+    resource: "@LimeFrontendBundle/Controller/PageController.php"
+    type:     annotation
+
+lime_admin:
+    resource: "@LimeAdminBundle/Controller"
+    prefix:   /admin
+    type:     annotation

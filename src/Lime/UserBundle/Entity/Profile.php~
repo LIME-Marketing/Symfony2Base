@@ -1,0 +1,91 @@
+<?php
+
+namespace Lime\UserBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use Doctrine\Common\Collections\ArrayCollection;
+use Lime\BaseBundle\Model\AbstractEntity;
+
+/**
+ * @author Michael Shattuck <ms2474@gmail.com>
+ * 
+ * @ORM\Entity
+ * @ORM\Table(name="lime_profile")
+ * @ORM\HasLifecycleCallbacks
+ */
+class Profile extends AbstractEntity
+{
+
+    /**
+     * @ORM\Id @ORM\Column(type="integer")
+     * @ORM\GeneratedValue
+     */
+    protected $id;
+
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    protected $updatedAt;
+
+    /**
+     * @ORM\OneToOne(targetEntity="User", cascade={"persist"}, inversedBy="profile")
+     */
+    protected $user;
+
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     */
+    protected $firstName;
+
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     */
+    protected $lastName;
+
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     */
+    protected $phoneNumber;
+
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     */
+    protected $address;
+
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     */
+    protected $city;
+
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     */
+    protected $state;
+
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     */
+    protected $zip;
+
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     */
+    protected $location;
+
+    /**
+     * @ORM\PrePersist 
+     */
+    public function onPrePersist()
+    {
+        $this->updatedAt = new \DateTime();
+    }
+
+    /**
+     * @ORM\PreUpdate
+     */
+    public function omPreUpdate()
+    {
+        $this->updatedAt = new \DateTime();
+    }
+}

@@ -1,3 +1,0 @@
-lime_admin_config_index:
-    pattern: /
-    defaults: { _controller: "LimeAdminBundle:Config:index" }

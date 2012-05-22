@@ -15,11 +15,11 @@
                 {{ config.description }}
             </td>
             <td>
-                <form action="{{ path('lime_admin_config_index') }}" method="post" {{ form_enctype(form) }}>
-                    <input type="text" name="value" value="{{ config.value }}" />
-                    <input type="hidden" name="name" value="{{ config.name }}" />
+                <form action="{{ path('lime.admin.config.index') }}" method="post" {{ form_enctype(form) }}>
+                    <input type="text" id="form[_value]" name="form[value]" value="{{ config.value }}" />
+                    <input type="hidden" id="form_name" name="form[name]" value="{{ config.name }}" />
+                    <input type="hidden" id="form__token" name="form[_token]" value="{{ token }}">
                     <input type="submit" value="Update" />
-                    {{ form_rest(form) }}
                 </form>
             </td>
         </tr>

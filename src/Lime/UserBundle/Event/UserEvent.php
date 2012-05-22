@@ -6,21 +6,22 @@ use Symfony\Component\EventDispatcher\Event;
 use Lime\UserBundle\Entity\User;
 
 /**
- * @author Derek Stobbe <djstobbe@gmail.com>
+ * @author Michael Shattuck <ms2474@gmail.com>
  */
 class  UserEvent extends Event
 {
     protected $user;
     protected $confirmation;
-    protected $fbdata;
-    protected $isFacebookRegistration;
 
-    public function __construct(User $user, $confirmation, $fbdata = null, $isFacebookRegistration = false)
+    /**
+     *
+     * @param User $user
+     * @param type $confirmation 
+     */
+    public function __construct(User $user, $confirmation)
     {
-        $this->user = $user;
+        $this->user         = $user;
         $this->confirmation = $confirmation;
-        $this->fbdata = $fbdata;
-        $this->isFacebookRegistration = $isFacebookRegistration;
     }
 
     /**
@@ -31,18 +32,11 @@ class  UserEvent extends Event
         return $this->user;
     }
 
+    /**
+     * @return wild
+     */
     public function getConfirmation()
     {
         return $this->confirmation;
-    }
-
-    public function getFbdata()
-    {
-        return $this->fbdata;
-    }
-
-    public function isFacebookRegistration()
-    {
-        return $this->isFacebookRegistration;
     }
 }

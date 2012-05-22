@@ -4,12 +4,15 @@ namespace Lime\UserBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Lime\BaseBundle\Controller\BaseController;
 
 /**
  * Class controller for admin functions involving user entities
  * 
- * @author Michael Shattuck <ms2474@gmail.com> 
+ * @author Michael Shattuck <ms2474@gmail.com>
  */
 class AdminController extends BaseController
 {
@@ -19,6 +22,8 @@ class AdminController extends BaseController
      *
      * @param Request $request
      * @return Response
+     * 
+     * @Route("/", name="lime.user.admin.index")
      */
     public function indexAction(Request $request)
     {
@@ -38,8 +43,8 @@ class AdminController extends BaseController
         }
 
         return $this->render('LimeUserBundle:Admin:index.html.twig', array(
-           'user' => $user,
-           'token'     => $token,
+           'users' => $users,
+           'token' => $token,
         ));
     }
 
@@ -47,48 +52,78 @@ class AdminController extends BaseController
      * URL for processing user promotions.
      *
      * @param Request $request
-     * @return Response 
+     * @return Response
+     * 
+     * @Route("/promote", name="lime.user.admin.promote")
      */
     public function promoteAction(Request $request)
     {
-        $token = $this->generateCsrf('user_action');
-        $form  = $request->get('form');
+        $form  = $this->getRoleForm();
 
-        if ($form['_token'] === $token) {
-            $user = $this->getUserRepo()->findOneByUsername($form['user']);
+        $form->bindRequest($request);
+
+        if ($form->isValid()) {
+            $data = $form->getData();
+            $user = $this->getUserRepo()->findOneBy(array(
+                    'email' => $data['user'],
+            ));
 
             $user->addRole('ROLE_ADMIN');
             $this->getUserRepo()->save($user);
         }
 
-        return $this->redirect($this->generateUrl('lime_user_admin_index'));
+        return $this->redirect($this->generateUrl('lime.user.admin.index'));
     }
 
     /**
      * URL for processing user demotions.
      *
      * @param Request $request
-     * @return Response 
+     * @return Response
+     * 
+     * @Route("/demote", name="lime.user.admin.demote")
      */
     public function demoteAction(Request $request)
     {
-        $token = $this->generateCsrf('user_action');
-        $form  = $request->get('form');
+        $form  = $this->getRoleForm();
 
-        if ($form['_token'] === $token) {
-            $user = $this->getUserRepo()->findOneByUsername($form['user']);
+        $form->bindRequest($request);
+
+        if ($form->isValid()) {
+            $data = $form->getData();
+            $user = $this->getUserRepo()->findOneBy(array(
+                    'email' => $data['user'],
+            ));
 
             $user->removeRole('ROLE_ADMIN');
             $user->removeRole('ROLE_SUPER_ADMIN');
             $this->getUserRepo()->save($user);
         }
 
-        return $this->redirect($this->generateUrl('lime_user_admin_index'));
+        return $this->redirect($this->generateUrl('lime.user.admin.index'));
     }
 
+    /**
+     *
+     * @return \Lime\BaseBundle\Repository\BaseRepository  
+     */
     protected function getUserRepo()
     {
         return $this->getRepo('LimeUserBundle:User');
     }
-    
+
+    /**
+     *
+     * @return \Symfony\Component\Form\Form
+     */
+    protected function getRoleForm()
+    {
+        $form = $this->createFormBuilder(null, 
+            array(
+                'intention' => 'user_action',
+            )
+        )->add('user');
+
+        return $form->getForm();
+    }
 }
