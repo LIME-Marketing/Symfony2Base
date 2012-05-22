@@ -42,9 +42,14 @@ class ProfilerController extends BaseController
         $squery        = $this->getSortedQuery($parameters);
         $params        = $this->getParameterArray();
         $params['run'] = $run;
+        $all           = false;
 
         foreach ($parameters as $key => $value) {
             $params[$key] = $value;
+        }
+
+        if (isset($_GET['all']) && $_GET['all'] == 0) {
+            $all = true;
         }
 
         $report = $xhprof->getReport($params);
@@ -56,6 +61,7 @@ class ProfilerController extends BaseController
             'run'    => $run,
             'query'  => $query,
             'squery' => $squery,
+            'all'    => $all,
         ));
     }
 
@@ -83,12 +89,13 @@ class ProfilerController extends BaseController
         $report = $xhprof->getReport($params);
 
         return $this->render('LimeProfilerBundle:Collector:function.html.twig', array(
-            'url'    => $request->server->get('REQUEST_URI'),
-            'params' => $params,
-            'report' => $report,
-            'run'    => $run,
-            'query'  => $query,
-            'squery' => $squery,
+            'url'      => $request->server->get('REQUEST_URI'),
+            'params'   => $params,
+            'report'   => $report,
+            'run'      => $run,
+            'query'    => $query,
+            'squery'   => $squery,
+            'function' => $function,
         ));
     }
 
@@ -151,7 +158,7 @@ class ProfilerController extends BaseController
     {
         return array(
             'run'       => '',
-            'source'    => 'xhprof',
+            'source'    => $this->container->getParameter('lime_profiler.file_extension'),
             'func'      => '',
             'type'      => 'png',
             'threshold' => 0.01,
