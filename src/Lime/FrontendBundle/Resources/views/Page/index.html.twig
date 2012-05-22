@@ -9,10 +9,58 @@
 
 {% block stylesheets %}
     {{ parent() }}
+    <link type="text/css" rel="stylesheet" href="{{ asset('bundles/limefrontend/css/style.css') }}">
 {% endblock stylesheets %}
 
 {% block content %}
-    <div>
-        <h1>Home</h1>
+    <div class="row">
+        <div class="span12">
+            <div class="row">
+                <div class="span12">
+                    <div class="page-header">
+                        <h1>Home Page</h1>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="span12">
+                    <img class="thumbnail" src="http://placehold.it/930x380" alt="">
+                </div>
+            </div>
+            <div class="row">
+                <div class="features-wrapper">
+                    <div class="span4">
+                        <h1>Feature</h1>
+                        <p>
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
+                            Integer dui libero, vestibulum non dictum sit amet, bibendum id velit. 
+                            Praesent vehicula pulvinar velit, sed elementum erat tincidunt a. 
+                            Donec eget lectus eros. Integer eget odio eget purus vestibulum 
+                            feugiat. Donec volutpat diam sem.
+                        </p>
+                    </div>
+                    <div class="span4">
+                        <h1>Feature</h1>
+                        <p>
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
+                            Integer dui libero, vestibulum non dictum sit amet, bibendum id velit. 
+                            Praesent vehicula pulvinar velit, sed elementum erat tincidunt a. 
+                            Donec eget lectus eros. Integer eget odio eget purus vestibulum 
+                            feugiat. Donec volutpat diam sem.
+                        </p>
+                    </div>
+                    <div class="span4">
+                        <h1>Feature</h1>
+                        <p>
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
+                            Integer dui libero, vestibulum non dictum sit amet, bibendum id velit. 
+                            Praesent vehicula pulvinar velit, sed elementum erat tincidunt a. 
+                            Donec eget lectus eros. Integer eget odio eget purus vestibulum 
+                            feugiat. Donec volutpat diam sem.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 {% endblock content %}

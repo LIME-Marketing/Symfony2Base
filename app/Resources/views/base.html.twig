@@ -49,16 +49,30 @@
             </div>
         </div>
         <div class="container" id="main-content">
-            <div class="well">
+            <div>
                 {% block content %}{% endblock %}
             </div>
         </div>
         <div class="container" id="footer">
             <div class="row">
                 <div class="span12">
-                    <footer>
-                       
-                    </footer>
+                    <div class="row">
+                        <footer>
+                            <hr>
+                            <div class="copyright span2 offset1">
+                                <ul class="unstyled">
+                                    <li>&copy;Symfony Starter {{ date('now')|date('Y') }}</li>
+                                </ul>
+                            </div>
+                            <div class="span4 offset4">
+                                <div class="pull-right">
+                                    <a href="{{ path('lime.frontend.page.contact') }}">Contact</a>
+                                    &nbsp;
+                                    <a href="#">Terms of Use</a>
+                                </div>
+                            </div>
+                        </footer>
+                    </div>
                 </div>
             </div>
         </div>

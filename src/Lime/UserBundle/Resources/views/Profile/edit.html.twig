@@ -1,19 +1,7 @@
-{% extends "LimeUserBundle::layout.html.twig" %}
+{% extends "LimeUserBundle:Profile:profile_layout.html.twig" %}
 
-{% block stylesheets %}
-{{ parent() }}
-{% endblock stylesheets %}
-
-{% block nav_active_profile %}class="active"{% endblock %}
-
-{% block fos_user_content %}
-    <ul class="nav nav-pills">
-        <li><a href="{{ path('fos_user_profile_show') }}" ><i class="icon-user"></i> My Profile</a></li>
-        <li class="active"><a href="{{ path('fos_user_profile_edit') }}" ><i class="icon-pencil icon-white"></i> Edit Profile</a></li>
-        <li><a href="{{ path('fos_user_security_logout') }}" ><i class="icon-arrow-left"></i> Logout</a></li>
-    </ul>
-
+{% block profile_content %}
     <h1>Edit Profile</h1>
 
     {% include "FOSUserBundle:Profile:edit_content.html.twig" %}
-{% endblock fos_user_content %}
+{% endblock %}

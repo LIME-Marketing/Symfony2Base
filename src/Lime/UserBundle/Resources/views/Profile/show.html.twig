@@ -1,43 +1,6 @@
-{% extends "LimeUserBundle::layout.html.twig" %}
+{% extends "LimeUserBundle:Profile:profile_layout.html.twig" %}
 
-{% block stylesheets %}
-    {{ parent() }}
-{% endblock %}
-
-{% block page_title %}
-<h1>User Profile</h1>
-{% endblock page_title %}
-
-{% block fos_user_content %}
-    <ul class="nav nav-pills">
-        <li class="active">
-            <a href="{{ path('fos_user_profile_show') }}">
-                <i class="icon-user icon-white"></i> 
-                My Profile
-            </a>
-        </li>
-        <li>
-            <a href="{{ path('fos_user_profile_edit') }}">
-                <i class="icon-pencil"></i> 
-                Edit Profile
-            </a>
-        </li>
-        {% if is_granted('ROLE_ADMIN') %}
-        <li>
-            <a href="{{ path('lime.admin.default.index') }}">
-                <i class="icon-lock"></i> 
-                Admin Panel
-            </a>
-        </li>
-        {% endif %}
-        <li>
-            <a href="{{ path('fos_user_security_logout') }}">
-                <i class="icon-arrow-left"></i> 
-                Logout
-            </a>
-        </li>
-    </ul>
-
+{% block profile_content %}
     <h3>Contact Information</h3>
 
     {% if user.profile.firstName is defined and user.profile.firstName != null %}
@@ -54,4 +17,4 @@
     {% if user.profile.city is defined and user.profile.city != null %}{{ user.profile.city }},{% endif %}{% if user.profile.state is defined and user.profile.state != null %}{{ user.profile.state }} {% endif %}{% if user.profile.zip is defined and user.profile.zip != null %}{{ user.profile.zip }}{% endif %}
     </address>
     {% endif %}
-{% endblock fos_user_content %}
+{% endblock %}

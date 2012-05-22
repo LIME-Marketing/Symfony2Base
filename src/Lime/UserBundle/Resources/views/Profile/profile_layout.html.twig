@@ -1,0 +1,49 @@
+{% extends "LimeUserBundle::layout.html.twig" %}
+
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+
+{% block page_title %}
+<h1>User Profile</h1>
+{% endblock page_title %}
+
+{% block fos_user_content %}
+<div class="row">
+    <div class="pull-right">
+        <ul class="nav nav-pills">
+            <li class="{% if app.request.requestUri == path('fos_user_profile_show')%}active{% endif %}">
+                <a href="{{ path('fos_user_profile_show') }}">
+                    <i class="icon-user{% if app.request.requestUri == path('fos_user_profile_show')%} icon-white{% endif %}"></i> 
+                    My Profile
+                </a>
+            </li>
+            <li class="{% if app.request.requestUri == path('fos_user_profile_edit')%}active{% endif %}">
+                <a href="{{ path('fos_user_profile_edit') }}">
+                    <i class="icon-pencil{% if app.request.requestUri == path('fos_user_profile_edit')%} icon-white{% endif %}"></i> 
+                    Edit Profile
+                </a>
+            </li>
+            {% if is_granted('ROLE_ADMIN') %}
+            <li class="{% block admin_classes %}{% endblock %}">
+                <a href="{{ path('lime.admin.default.index') }}">
+                    <i class="icon-lock {% block admin_icon_white %}{% endblock %}"></i> 
+                    Admin Panel
+                </a>
+            </li>
+            {% endif %}
+            <li>
+                <a href="{{ path('fos_user_security_logout') }}">
+                    <i class="icon-arrow-left"></i> 
+                    Logout
+                </a>
+            </li>
+        </ul>
+    </div>
+    <div class="clearfix"></div>
+</div>
+<div class="row">
+    {% block profile_content %}
+    {% endblock %}
+</div>
+{% endblock fos_user_content %}

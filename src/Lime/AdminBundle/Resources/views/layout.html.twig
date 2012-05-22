@@ -1,11 +1,10 @@
-{% extends '::base.html.twig' %}
+{% extends "LimeUserBundle:Profile:profile_layout.html.twig" %}
 
-{% block content %}
-    <ul class="nav nav-pills">
-        <li class="{% if app.request.requestUri == path('lime.admin.default.index')%}active{% endif %}"><a href="{{ path('lime.admin.default.index') }}">Dashboard Home</a></li>
-        <li class="{% if app.request.requestUri == path('lime.admin.message.list')%}active{% endif %}"><a href="{{ path('lime.admin.message.list') }}">Messages {% render 'LimeAdminBundle:Default:getUnreadMessages' %}</a></li>
-    </ul>
+{% block admin_classes %}active{% endblock %}
 
+{% block admin_icon_white %}icon-white{% endblock %}
+
+{% block profile_content %}
     <h1>Admin Panel</h1>
     {% block admin_content %}{% endblock %}
 {% endblock %}
