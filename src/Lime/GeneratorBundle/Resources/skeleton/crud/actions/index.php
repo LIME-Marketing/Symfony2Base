@@ -3,13 +3,13 @@
      * Lists all {{ entity }} entities.
      *
 {% if 'annotation' == format %}
-     * @Route("/", name="{{ route_name_prefix }}")
+     * @Route("/", name="{{ route_name_prefix }}_index")
      * @Template()
 {% endif %}
      */
     public function indexAction()
     {
-        $entities = $this->getRepo(('{{ bundle }}:{{ entity }}')->findAll();
+        $entities = $this->getRepo('{{ bundle }}:{{ entity }}')->findAll();
 
 {% if 'annotation' == format %}
         return array(

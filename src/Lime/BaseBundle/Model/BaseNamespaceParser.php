@@ -34,6 +34,14 @@ class BaseNamespaceParser
     protected $class;
 
     /**
+     * Setting for throwing error if class is
+     * not found.
+     *
+     * @var boolean 
+     */
+    protected $throw;
+
+    /**
      * Construct of BaseBundleNamespaceParser class.
      *
      * @param string $path Class type to be retrieved by parse.
@@ -41,11 +49,12 @@ class BaseNamespaceParser
      * @param string $path Namespace style string of path to folder containing 
      * the requested class. (with trailing backslash)
      */
-    public function getPath($class, $path = null, $type = null)
+    public function getPath($class, $path = null, $type = null, $throw = true)
     {
         $this->class = $class;
         $this->path  = $path;
         $this->type  = $type;
+        $this->throw = $throw;
         $index       = 1;
         $pathArray   = $this->parsePath($class);
         $namespace   = $this->getNamespace($pathArray['nsArray'], $index);
@@ -81,7 +90,12 @@ class BaseNamespaceParser
     protected function getNamespace(array $nsArray, $index)
     {
         if ($index >= count($nsArray)) {
-            throw new InvalidArgumentException("Invalid Class: The class '$this->class.$this->type' could not be found!");
+            if ($this->throw) {
+                throw new InvalidArgumentException("Invalid Class: The class '$this->class.$this->type' could not be found!");
+            }
+            else {
+                return false;
+            }
         }
 
         $namespace = '';
@@ -114,6 +128,11 @@ class BaseNamespaceParser
         while (!class_exists($classPath)) {
             $index++;
             $namespace = $this->getNamespace($nsArray, $index);
+
+            if (false === $namespace) {
+                return false;
+            }
+
             $classPath = "$namespace\\$servicePath";
         }
 

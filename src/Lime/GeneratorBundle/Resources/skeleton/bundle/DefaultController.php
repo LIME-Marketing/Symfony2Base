@@ -2,13 +2,13 @@
 
 namespace {{ namespace }}\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Lime\BaseBundle\Controller\BaseController;
 {% if 'annotation' == format -%}
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 {% endif %}
 
-class DefaultController extends Controller
+class DefaultController extends BaseController
 {
     {% if 'annotation' == format -%}
     /**

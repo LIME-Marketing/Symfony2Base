@@ -9,7 +9,7 @@
      */
     public function newAction()
     {
-        $entity = $this->getRepo(('{{ bundle }}:{{ entity }}')->create();
+        $entity = $this->getRepo('{{ bundle }}:{{ entity }}')->create();
         $form   = $this->createForm(new {{ entity_class }}Type(), $entity);
 
 {% if 'annotation' == format %}

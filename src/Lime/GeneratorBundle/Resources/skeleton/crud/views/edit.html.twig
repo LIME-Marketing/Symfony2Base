@@ -1,6 +1,6 @@
-{% extends 'base.html.twig' %}
+{{ "{% extends '::base.html.twig' %}" }}
 
-{% block content %}
+{{ "{% block content %}" }}
 <div>
     <h1>{{ entity }} - Edit</h1>
 
@@ -14,4 +14,4 @@
     {% set hide_edit, hide_delete = true, false %}
     {% include 'views/others/record_actions.html.twig' %}
 </div>
-{% endblock %}
+{{ "{% endblock %}" }}

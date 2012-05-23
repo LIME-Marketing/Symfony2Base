@@ -14,16 +14,16 @@
         $form->bindRequest($request);
 
         if ($form->isValid()) {
-            $entity = $this->getRepo(('{{ bundle }}:{{ entity }}')->findOneBySlug($slug);
+            $entity = $this->getRepo('{{ bundle }}:{{ entity }}')->findOneBySlug($slug);
 
             if (!$entity) {
                 throw $this->createNotFoundException('Unable to find {{ entity }} entity.');
             }
 
-            $this->getRepo(('{{ bundle }}:{{ entity }}')->save($entity);
+            $this->getRepo('{{ bundle }}:{{ entity }}')->remove($entity);
         }
 
-        return $this->redirect($this->generateUrl('{{ route_name_prefix }}'));
+        return $this->redirect($this->generateUrl('{{ route_name_prefix }}_index'));
     }
 
     private function createDeleteForm($slug)

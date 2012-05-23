@@ -10,7 +10,7 @@
      */
     public function updateAction(Request $request, $slug)
     {
-        $entity = $this->getRepo(('{{ bundle }}:{{ entity }}')->findOneBySlug($slug);
+        $entity = $this->getRepo('{{ bundle }}:{{ entity }}')->findOneBySlug($slug);
 
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find {{ entity }} entity.');
@@ -22,7 +22,7 @@
         $editForm->bindRequest($request);
 
         if ($editForm->isValid()) {
-            $this->getRepo(('{{ bundle }}:{{ entity }}')->save($entity);
+            $this->getRepo('{{ bundle }}:{{ entity }}')->save($entity);
 
             return $this->redirect($this->generateUrl('{{ route_name_prefix }}_edit', array('slug' => $slug)));
         }

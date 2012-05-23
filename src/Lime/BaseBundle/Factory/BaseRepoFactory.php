@@ -47,27 +47,44 @@ class BaseRepoFactory extends BaseFactoryModel
      * @return BaseRepository|repoClass
      * @throws InvalidArgumentException 
      */
-    public function get($class, $custom = false)
+    public function get($class)
     {
         if (array_key_exists($class, $this->repositories)) {
             return $this->repositories[$class];
         }
 
-        if ($custom) {
-            $path = $this->parser->getPath($class, 'Repository', 'Repository');
-            $this->repositories[$class] = new $path($this->dispatcher, $this->em);
+        $path = $this->parser->getPath($class, 'Repository', 'Repository', false);
+
+        if ($path) {
+            $this->repositories[$class] = new $path($this->dispatcher, $this->em, $class);
         }
         else {
-            $metadata  = $this->em->getClassMetadata($class);
+            try {
+                $metadata  = $this->em->getClassMetadata($class);
+            }
+            catch (\ErrorException $e) {
+                $this->throwClassException($class);
+            }
+
             $repoClass = $metadata->rootEntityName;
 
             if (!class_exists($repoClass)) {
-                throw new InvalidArgumentException('Invalid Class: The class "'.$class.'" could not be found!');
+                $this->throwClassException($class);
             }
 
             $this->repositories[$class] = new BaseRepository($this->dispatcher, $this->em, $repoClass);
         }
 
         return $this->repositories[$class];
+    }
+
+    /**
+     *
+     * @param string $class
+     * @throws InvalidArgumentException 
+     */
+    protected function throwClassException($class)
+    {
+        throw new InvalidArgumentException('Invalid Class: The class "'.$class.'" could not be found!');
     }
 }

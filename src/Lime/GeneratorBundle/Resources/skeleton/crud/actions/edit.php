@@ -9,7 +9,7 @@
      */
     public function editAction(Request $request, $slug)
     {
-        $entity = $this->getRepo(('{{ bundle }}:{{ entity }}')->findOneBySlug($slug);
+        $entity = $this->getRepo('{{ bundle }}:{{ entity }}')->findOneBySlug($slug);
 
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find {{ entity }} entity.');
