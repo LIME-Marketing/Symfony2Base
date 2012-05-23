@@ -24,7 +24,7 @@ assetic:
 
 lime_profiler:
     location_reports: %kernel.root_dir%/../app/memory_reports
-    file_extension:   apealz
+    file_extension:   symfony
     overwrite:        true
-    enabled:          true
+    enabled:          false
 
