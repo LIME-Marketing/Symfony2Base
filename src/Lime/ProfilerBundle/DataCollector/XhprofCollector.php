@@ -120,7 +120,7 @@ class XhprofCollector extends DataCollector
     public function getXhprofUrl()
     {
         if ($this->functionCheck()) {
-            return $_SERVER['SCRIPT_NAME'] . '/_memory_profiler/?run=' . $this->data['xhprof'] . '&source=' . $this->data['source'];
+            return $_SERVER['SCRIPT_NAME'] . '/_memory_profiler/' . $this->data['xhprof'] . '/';
         }
     }
 

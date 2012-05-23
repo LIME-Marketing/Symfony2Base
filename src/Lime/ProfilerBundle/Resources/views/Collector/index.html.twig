@@ -24,6 +24,23 @@
     </div>
 </div>
 <div>
+    <ul class="nav nav-pills">
+        <li {% if all != true %}class="active"{% endif %}>
+            <a href="{{ path('lime_profiler_profiler_index', {run:run}) }}">
+                View Index (100 Entries)
+            </a>
+        </li>
+        <li {% if all %}class="active"{% endif %}>
+            <a href="{{ path('lime_profiler_profiler_index', {run:run, all:0}) }}">
+                View All
+            </a>
+        </li>
+        <li>
+            <a href="{{ path('lime_profiler_profiler_index', {run:run, all:0}) }}">
+                View Call Graph
+            </a>
+        </li>
+    </ul>
     <table class="table table-bordered table-striped">
         <thead>
             <th>
@@ -113,7 +130,7 @@
             {% for function in report.indFunctions %}
                 <tr>
                     <td>
-                        <a href="{{ path('lime_profiler_profiler_function', {run:run, function:function.fn }) }}">
+                        <a href="{{ path('lime_profiler_profiler_function', {run:run, function:function.fn|url_encode() }) }}">
                             {{ function.fn }}
                         </a>
                     </td>

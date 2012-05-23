@@ -24,13 +24,30 @@
     </div>
 </div>
 <div>
+    <ul class="nav nav-pills">
+        <li>
+            <a href="{{ path('lime_profiler_profiler_index', {run:run}) }}">
+                View Index (100 Entries)
+            </a>
+        </li>
+        <li>
+            <a href="{{ path('lime_profiler_profiler_index', {run:run, all:0}) }}">
+                View All
+            </a>
+        </li>
+        <li class="active">
+            <a href="#">
+                View Function - {{ function }}
+            </a>
+        </li>
+    </ul>
     <table class="table table-bordered table-striped">
         <thead>
             <th>
                 Function Name
             </th>
             <th>
-                <a href="{{ path('lime_profiler_profiler_index', {run:run, sort:'wt'}) }}{{ squery }}">
+                <a href="{{ path('lime_profiler_profiler_function', {run:run, function:function, sort:'wt'}) }}{{ squery }}">
                     Incl. Wall Time<br>
                     (microsec)
                 </a>
@@ -40,7 +57,7 @@
             </th>
             <th>
                 
-                <a href="{{ path('lime_profiler_profiler_index', {run:run, sort:'excl_wt'}) }}{{ squery }}">
+                <a href="{{ path('lime_profiler_profiler_function', {run:run, function:function, sort:'excl_wt'}) }}{{ squery }}">
                     Excl. Wall Time<br>
                     (microsec)
                 </a>
@@ -50,7 +67,7 @@
             </th>
             <th>
                 
-                <a href="{{ path('lime_profiler_profiler_index', {run:run, sort:'cpu'}) }}{{ squery }}">
+                <a href="{{ path('lime_profiler_profiler_function', {run:run, function:function, sort:'cpu'}) }}{{ squery }}">
                     Incl. CPU<br>
                     (microsecs)
                 </a>
@@ -60,7 +77,7 @@
             </th>
             <th>
                 
-                <a href="{{ path('lime_profiler_profiler_index', {run:run, sort:'excl_cpu'}) }}{{ squery }}">
+                <a href="{{ path('lime_profiler_profiler_function', {run:run, function:function, sort:'excl_cpu'}) }}{{ squery }}">
                     Excl. CPU<br>
                     (microsec)
                 </a>
@@ -70,7 +87,7 @@
             </th>
             <th>
                 
-                <a href="{{ path('lime_profiler_profiler_index', {run:run, sort:'mu'}) }}{{ squery }}">
+                <a href="{{ path('lime_profiler_profiler_function', {run:run, function:function, sort:'mu'}) }}{{ squery }}">
                     Incl. MemUse<br>
                     (bytes)
                 </a>
@@ -80,7 +97,7 @@
             </th>
             <th>
                 
-                <a href="{{ path('lime_profiler_profiler_index', {run:run, sort:'excl_mu'}) }}{{ squery }}">
+                <a href="{{ path('lime_profiler_profiler_function', {run:run, function:function, sort:'excl_mu'}) }}{{ squery }}">
                     Excl. MemUse<br>
                     (bytes)
                 </a>
@@ -90,7 +107,7 @@
             </th>
             <th>
                 
-                <a href="{{ path('lime_profiler_profiler_index', {run:run, sort:'pmu'}) }}{{ squery }}">
+                <a href="{{ path('lime_profiler_profiler_function', {run:run, function:function, sort:'pmu'}) }}{{ squery }}">
                     Incl. PeakMemUse<br>
                     (bytes)
                 </a>
@@ -100,7 +117,7 @@
             </th>
             <th>
                 
-                <a href="{{ path('lime_profiler_profiler_index', {run:run, sort:'excl_pmu'}) }}{{ squery }}">
+                <a href="{{ path('lime_profiler_profiler_function', {run:run, function:function, sort:'excl_pmu'}) }}{{ squery }}">
                     Excl. PeakMemUse<br>
                     (bytes)
                 </a>
@@ -113,7 +130,7 @@
             {% for function in report.indFunctions %}
                 <tr>
                     <td>
-                        <a href="{{ path('lime_profiler_profiler_function', {run:run, function:function.fn }) }}">
+                        <a href="{{ path('lime_profiler_profiler_function', {run:run, function:function, function:function.fn }) }}">
                             {{ function.fn }}
                         </a>
                     </td>

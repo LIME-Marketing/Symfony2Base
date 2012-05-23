@@ -9,4 +9,4 @@ composer.lock
 app/config/parameters.yml
 composer.lock
 app/bootstrap.php.cache
-app/memory_reports/*
+app/memory_reports/url:*

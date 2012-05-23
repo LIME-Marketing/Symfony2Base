@@ -26,5 +26,5 @@ lime_profiler:
     location_reports: %kernel.root_dir%/../app/memory_reports
     file_extension:   apealz
     overwrite:        true
-    enabled:          false
+    enabled:          true
 
