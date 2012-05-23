@@ -9,9 +9,6 @@ namespace Lime\BaseBundle\Model;
  */
 interface BaseFactoryInterface
 {
-    /* @var $parser \Lime\BaseBundle\Model\BaseNamespaceParser */
-    protected $parser;
-
     /**
      * Function for retreiving classes.
      *  

@@ -12,10 +12,9 @@ use Lime\BaseBundle\Model\BaseNamespaceParser;
  */
 abstract class BaseFactoryModel implements BaseFactoryInterface
 {
-    /**
-     * {@inheritDoc}
-     */
+    /* @var $parser \Lime\BaseBundle\Model\BaseNamespaceParser */
     protected $parser;
+
 
     public function __construct()
     {
