@@ -2,6 +2,7 @@
 
 namespace Lime\BaseBundle\Model;
 
+use Lime\BaseBundle\Model\BaseFactoryInterface;
 use Lime\BaseBundle\Model\BaseNamespaceParser;
 
 /**
@@ -9,14 +10,20 @@ use Lime\BaseBundle\Model\BaseNamespaceParser;
  *
  * @author Michael Shattuck <ms2474@gmail.com>
  */
-abstract class BaseFactoryModel
+abstract class BaseFactoryModel implements BaseFactoryInterface
 {
+    /**
+     * {@inheritDoc}
+     */
     protected $parser;
 
     public function __construct()
     {
         $this->parser = new BaseNamespaceParser();
     }
-    
+
+    /**
+     * {@inheritDoc}
+     */
     abstract function get($class);
 }
